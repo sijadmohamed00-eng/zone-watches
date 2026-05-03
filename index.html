@@ -1,272 +1,333 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ar" dir="rtl">
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>زون — ساعات فاخرة</title>
+
+<!-- PWA -->
+<link rel="manifest" href="manifest.json"/>
+<meta name="theme-color" content="#0a0a0a" id="theme-meta"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
+<meta name="apple-mobile-web-app-title" content="زون"/>
+<link rel="apple-touch-icon" href="icons/icon-192.png"/>
+<link rel="icon" type="image/png" href="favicon.png"/>
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 
 :root{
   --bg:#f0eeeb;
-  --text:#111;
-  --text2:#777;
-  --border:#ddd;
-  --silver:#a8a8a8;
+  --surface:#ffffff;
+  --text:#111111;
+  --text2:#777777;
+  --border:#dddddd;
+  --shadow:rgba(0,0,0,0.12);
   --dark:#0a0a0a;
+  --tr:0.35s cubic-bezier(.23,1,.32,1);
+}
+[data-theme="dark"]{
+  --bg:#0e0e0e;
+  --surface:#1a1a1a;
+  --text:#f0eeeb;
+  --text2:#888888;
+  --border:#2a2a2a;
+  --shadow:rgba(0,0,0,0.55);
+  --dark:#f0eeeb;
 }
 
 html,body{
   width:100%;height:100%;
-  background:var(--bg);
+  background:var(--bg);color:var(--text);
   font-family:'Inter',sans-serif;
-  overflow:hidden;
-  user-select:none;
+  overflow:hidden;user-select:none;
+  transition:background var(--tr),color var(--tr);
 }
 
-/* ── HEADER ── */
+/* HEADER */
 header{
   position:fixed;top:0;left:0;right:0;z-index:200;
-  padding:16px 40px;
+  padding:14px 36px;
   display:flex;align-items:center;justify-content:space-between;
-  background:rgba(240,238,235,0.85);
-  backdrop-filter:blur(12px);
-  border-bottom:1px solid rgba(0,0,0,0.06);
+  background:rgba(240,238,235,0.88);
+  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  border-bottom:1px solid var(--border);
+  transition:background var(--tr),border-color var(--tr);
 }
+[data-theme="dark"] header{background:rgba(14,14,14,0.88);}
 
-/* Logo */
-.logo-wrap{
-  display:flex;align-items:center;
-  height:48px;
-}
+.logo-wrap{height:44px;display:flex;align-items:center;cursor:pointer}
 .logo-wrap img{
-  height:48px;width:48px;
-  object-fit:contain;
-  filter:invert(1) brightness(0.15);
+  height:44px;width:44px;object-fit:contain;
+  filter:invert(1) brightness(0.12);
+  transition:filter var(--tr);
 }
+[data-theme="dark"] .logo-wrap img{filter:invert(1) brightness(0.85);}
 
-.header-center{
+.header-mid{
   position:absolute;left:50%;transform:translateX(-50%);
-  font-family:'Space Mono',monospace;
-  font-size:9px;letter-spacing:0.35em;
-  text-transform:uppercase;color:var(--text2);
+  font-size:9px;letter-spacing:0.3em;text-transform:uppercase;
+  color:var(--text2);font-family:'Space Mono',monospace;
 }
 
-.header-right{display:flex;align-items:center;gap:28px}
-.header-right span{
-  font-size:10px;letter-spacing:0.18em;
-  text-transform:uppercase;color:var(--text2);
-  cursor:pointer;transition:color .2s;
+.header-right{display:flex;align-items:center;gap:18px}
+.nav-link{
+  font-size:10px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--text2);cursor:pointer;transition:color .2s;
+  background:none;border:none;font-family:'Inter',sans-serif;
 }
-.header-right span:hover{color:var(--text)}
+.nav-link:hover{color:var(--text)}
+
+/* THEME TOGGLE */
+.theme-btn{
+  width:38px;height:21px;background:var(--border);
+  border-radius:11px;border:none;position:relative;
+  cursor:pointer;transition:background .3s;flex-shrink:0;
+}
+.theme-btn::after{
+  content:'';position:absolute;top:3px;left:3px;
+  width:15px;height:15px;background:var(--text2);
+  border-radius:50%;transition:transform .3s,background .3s;
+}
+[data-theme="dark"] .theme-btn::after{transform:translateX(17px);background:var(--text);}
+
 .cart-pill{
-  display:flex;align-items:center;gap:8px;
-  border:1px solid var(--border);
-  padding:7px 16px;border-radius:40px;
-  font-size:10px;letter-spacing:.15em;
-  text-transform:uppercase;color:var(--text2);
-  cursor:pointer;transition:all .2s;
+  display:flex;align-items:center;gap:7px;
+  border:1px solid var(--border);border-radius:40px;
+  padding:6px 14px;cursor:pointer;
+  font-size:10px;letter-spacing:.15em;text-transform:uppercase;
+  color:var(--text2);transition:all .2s;
 }
 .cart-pill:hover{border-color:var(--text);color:var(--text)}
 .cart-pill b{
-  background:var(--dark);color:#fff;
+  background:var(--dark);color:var(--bg);
   border-radius:50%;width:16px;height:16px;
   display:flex;align-items:center;justify-content:center;
   font-size:8px;font-weight:700;
+  transition:background var(--tr),color var(--tr);
 }
 
-/* ── DECORATIVE BACKGROUND ── */
-#deco{
-  position:fixed;inset:0;pointer-events:none;z-index:1;
+/* PWA INSTALL BANNER */
+#install-banner{
+  position:fixed;bottom:90px;left:50%;
+  transform:translateX(-50%) translateY(12px);
+  z-index:300;
+  background:var(--dark);color:var(--bg);
+  border-radius:18px;padding:14px 18px;
+  display:flex;align-items:center;gap:14px;
+  box-shadow:0 10px 44px var(--shadow);
+  opacity:0;pointer-events:none;
+  transition:opacity .4s,transform .4s;
+  white-space:nowrap;
 }
+#install-banner.show{opacity:1;pointer-events:all;transform:translateX(-50%) translateY(0)}
+#install-banner img{width:34px;height:34px;border-radius:8px;object-fit:contain;background:#222;padding:2px;}
+.ib-text{display:flex;flex-direction:column;gap:3px}
+.ib-text strong{font-size:12px;font-weight:600}
+.ib-text span{font-size:9px;opacity:.65;letter-spacing:.04em}
+.ib-btns{display:flex;gap:8px;margin-right:6px}
+.ib-install{
+  background:var(--bg);color:var(--dark);
+  border:none;border-radius:9px;padding:7px 15px;
+  font-size:10px;font-weight:600;cursor:pointer;
+  letter-spacing:.05em;transition:opacity .2s;
+}
+.ib-install:hover{opacity:.85}
+.ib-close{
+  background:none;border:none;color:var(--bg);
+  font-size:18px;cursor:pointer;opacity:.55;padding:2px 6px;
+}
+.ib-close:hover{opacity:1}
 
-/* ── SCENE ── */
-#scene-wrap{
-  position:fixed;inset:0;overflow:hidden;
-}
+/* DECO */
+#deco{position:fixed;inset:0;pointer-events:none;z-index:1;}
+[data-theme="dark"] #deco{opacity:0.25;}
+
+/* SCENE */
+#scene-wrap{position:fixed;inset:0;overflow:hidden;}
 #scene{
   position:absolute;left:50%;top:50%;
   transform:translate(-50%,-50%);
   transform-style:preserve-3d;
 }
 
-/* ── WATCH ITEMS ── */
-.wi{
-  position:absolute;
-  transform-style:preserve-3d;
-  transition:opacity 0.35s ease;
-}
+/* WATCH ITEMS */
+.wi{position:absolute;transform-style:preserve-3d;transition:opacity 0.35s ease}
 .wi img{
-  display:block;object-fit:contain;
-  pointer-events:none;
-  transition:transform 0.5s cubic-bezier(.23,1,.32,1), filter 0.4s ease;
-  filter:drop-shadow(0 12px 32px rgba(0,0,0,0.15)) drop-shadow(0 2px 8px rgba(0,0,0,0.08));
+  display:block;object-fit:contain;pointer-events:none;
+  transition:transform 0.5s cubic-bezier(.23,1,.32,1),filter 0.4s ease;
+  filter:drop-shadow(0 10px 28px rgba(0,0,0,0.13));
   animation:wfloat var(--dur,3.5s) ease-in-out infinite;
   animation-delay:var(--delay,0s);
+}
+[data-theme="dark"] .wi img{
+  filter:drop-shadow(0 10px 32px rgba(0,0,0,0.7)) drop-shadow(0 0 16px rgba(255,255,255,0.03));
 }
 @keyframes wfloat{
   0%,100%{transform:translateY(0) rotate(var(--rot,0deg))}
   50%{transform:translateY(var(--bob,-12px)) rotate(var(--rot,0deg))}
 }
 .wi.hovering img{
-  filter:drop-shadow(0 24px 56px rgba(0,0,0,0.22)) drop-shadow(0 4px 16px rgba(0,0,0,0.12));
+  filter:drop-shadow(0 22px 52px rgba(0,0,0,0.2)) !important;
   transform:translateY(-8px) scale(1.07) rotate(var(--rot,0deg)) !important;
   animation-play-state:paused;cursor:pointer;
 }
-.wi.faded{opacity:0.08 !important}
+[data-theme="dark"] .wi.hovering img{
+  filter:drop-shadow(0 22px 52px rgba(0,0,0,0.85)) drop-shadow(0 0 28px rgba(255,255,255,0.07)) !important;
+}
+.wi.faded{opacity:0.07 !important}
 .wi.zoomed img{
   transform:scale(1.65) rotate(0deg) !important;
-  filter:drop-shadow(0 32px 80px rgba(0,0,0,0.25)) !important;
   animation-play-state:paused;
 }
 
-/* ── DETAIL CARD ── */
+/* DETAIL CARD */
 .detail{
-  position:absolute;left:50%;
-  top:calc(100% + 6px);
+  position:absolute;left:50%;top:calc(100% + 8px);
   transform:translateX(-50%) translateY(10px);
-  width:190px;
-  background:#fff;
-  border:1px solid var(--border);
-  border-radius:3px;
-  padding:18px;
+  width:195px;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:4px;padding:18px;
   opacity:0;pointer-events:none;
-  transition:opacity .3s, transform .3s;
-  z-index:300;text-align:center;
-  box-shadow:0 12px 48px rgba(0,0,0,0.10);
+  transition:opacity .3s,transform .3s,background var(--tr),border-color var(--tr);
+  z-index:300;text-align:center;direction:rtl;
+  box-shadow:0 12px 48px var(--shadow);
 }
 .detail.show{opacity:1;transform:translateX(-50%) translateY(0);pointer-events:all}
 .detail .close{
-  position:absolute;top:8px;right:8px;
-  width:20px;height:20px;
-  border:1px solid var(--border);background:none;border-radius:50%;
-  font-size:9px;cursor:pointer;
+  position:absolute;top:8px;left:8px;
+  width:20px;height:20px;border:1px solid var(--border);
+  background:none;border-radius:50%;font-size:9px;cursor:pointer;
   display:flex;align-items:center;justify-content:center;
   color:var(--text2);transition:all .2s;
 }
-.detail .close:hover{background:var(--dark);color:#fff;border-color:var(--dark)}
-.detail .dcat{font-size:8px;letter-spacing:.22em;text-transform:uppercase;color:var(--silver);margin-bottom:5px}
-.detail .dname{font-size:12px;font-weight:600;color:var(--text);line-height:1.3;margin-bottom:10px}
+.detail .close:hover{background:var(--dark);color:var(--bg);border-color:var(--dark)}
+.detail .dcat{font-size:8px;letter-spacing:.2em;text-transform:uppercase;color:var(--text2);margin-bottom:5px}
+.detail .dname{font-size:12px;font-weight:600;color:var(--text);line-height:1.35;margin-bottom:10px}
 .detail .dprice{
   font-family:'Space Mono',monospace;
-  font-size:17px;font-weight:700;color:var(--dark);margin-bottom:13px;
+  font-size:18px;font-weight:700;color:var(--text);margin-bottom:13px;
 }
 .detail .dbuy{
   width:100%;padding:10px;
-  background:var(--dark);color:#fff;
-  border:none;border-radius:2px;
-  font-size:9px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;
-  cursor:pointer;transition:background .2s;
+  background:var(--dark);color:var(--bg);
+  border:none;border-radius:3px;
+  font-size:9px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;
+  cursor:pointer;transition:opacity .2s;font-family:'Inter',sans-serif;
 }
-.detail .dbuy:hover{background:#333}
+.detail .dbuy:hover{opacity:.8}
 
-/* ── FILTER BAR ── */
+/* FILTER BAR */
 #filter-bar{
-  position:fixed;bottom:32px;left:50%;
-  transform:translateX(-50%);z-index:200;
+  position:fixed;bottom:28px;left:50%;transform:translateX(-50%);z-index:200;
   display:flex;align-items:center;
-  background:#fff;
-  border:1px solid var(--border);
-  border-radius:50px;
-  padding:5px;
-  box-shadow:0 4px 32px rgba(0,0,0,0.07);
-  animation:barIn .6s .3s cubic-bezier(.23,1,.32,1) both;
-  gap:2px;
+  background:var(--surface);border:1px solid var(--border);
+  border-radius:50px;padding:5px;gap:2px;
+  box-shadow:0 4px 32px var(--shadow);
+  animation:barIn .7s .3s cubic-bezier(.23,1,.32,1) both;
+  transition:background var(--tr),border-color var(--tr),box-shadow var(--tr);
 }
 @keyframes barIn{
-  from{opacity:0;transform:translateX(-50%) translateY(16px)}
+  from{opacity:0;transform:translateX(-50%) translateY(18px)}
   to{opacity:1;transform:translateX(-50%) translateY(0)}
 }
 .add-btn{
   width:32px;height:32px;border-radius:50%;
-  background:var(--dark);color:#fff;border:none;
-  font-size:18px;display:flex;align-items:center;justify-content:center;
-  cursor:pointer;flex-shrink:0;margin-right:2px;
-  transition:background .2s;
+  background:var(--dark);color:var(--bg);
+  border:none;font-size:18px;
+  display:flex;align-items:center;justify-content:center;
+  cursor:pointer;flex-shrink:0;margin-left:2px;
+  transition:background var(--tr),color var(--tr),opacity .2s;
 }
-.add-btn:hover{background:#333}
-.sep{width:1px;height:14px;background:var(--border);margin:0 1px}
+.add-btn:hover{opacity:.8}
+.sep{width:1px;height:14px;background:var(--border);margin:0 1px;flex-shrink:0}
 .fbtn{
-  background:none;border:none;
-  padding:7px 15px;border-radius:30px;
-  font-size:10px;font-weight:500;letter-spacing:.08em;
+  background:none;border:none;padding:7px 14px;border-radius:30px;
+  font-size:10px;font-weight:500;letter-spacing:.05em;
   color:var(--text2);cursor:pointer;transition:all .2s;
-  white-space:nowrap;
+  white-space:nowrap;font-family:'Inter',sans-serif;
 }
 .fbtn:hover{color:var(--text)}
-.fbtn.active{background:var(--dark);color:#fff}
+.fbtn.active{background:var(--dark);color:var(--bg)}
 
-/* ── BOTTOM INFO ── */
+/* BOTTOM */
 #count-badge{
-  position:fixed;bottom:32px;right:40px;z-index:200;
-  font-family:'Space Mono',monospace;
-  font-size:9px;color:var(--text2);letter-spacing:.12em;
-  text-transform:uppercase;
-  animation:barIn .6s .5s both;
+  position:fixed;bottom:28px;right:36px;z-index:200;
+  font-family:'Space Mono',monospace;font-size:9px;
+  color:var(--text2);letter-spacing:.12em;text-transform:uppercase;
+  animation:barIn .7s .5s both;
 }
 #scroll-hint{
-  position:fixed;bottom:32px;left:40px;z-index:200;
+  position:fixed;bottom:28px;left:36px;z-index:200;
   display:flex;align-items:center;gap:8px;
-  animation:barIn .6s .6s both;
+  animation:barIn .7s .6s both;
 }
 #scroll-hint span{font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--text2)}
 .scroll-arr{
-  width:14px;height:14px;
+  width:13px;height:13px;
   border-right:1px solid var(--text2);border-bottom:1px solid var(--text2);
-  transform:rotate(45deg);
-  animation:ap 1.5s ease-in-out infinite;
+  transform:rotate(45deg);animation:ap 1.6s ease-in-out infinite;
 }
 @keyframes ap{
   0%,100%{opacity:.3;transform:rotate(45deg) translate(0,0)}
   50%{opacity:1;transform:rotate(45deg) translate(2px,2px)}
 }
 
-/* ── TOAST ── */
+/* TOAST */
 #toast{
-  position:fixed;top:80px;right:40px;z-index:500;
-  background:var(--dark);color:#fff;
-  padding:13px 20px;border-radius:3px;
-  font-size:10px;letter-spacing:.12em;
+  position:fixed;top:78px;left:50%;
+  transform:translateX(-50%) translateY(-8px);
+  z-index:500;
+  background:var(--dark);color:var(--bg);
+  padding:11px 22px;border-radius:40px;
+  font-size:11px;letter-spacing:.06em;
   opacity:0;pointer-events:none;
-  transition:opacity .3s;
-  box-shadow:0 8px 32px rgba(0,0,0,0.2);
+  transition:opacity .3s,transform .3s;
+  box-shadow:0 6px 28px var(--shadow);white-space:nowrap;
 }
-#toast.show{opacity:1}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
 </style>
 </head>
 <body>
 
-<!-- Decorative SVG background -->
 <svg id="deco" viewBox="0 0 1400 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
-  <ellipse cx="200" cy="450" rx="160" ry="210" fill="none" stroke="#ccc" stroke-width="0.7" opacity="0.5"/>
-  <ellipse cx="1200" cy="450" rx="160" ry="210" fill="none" stroke="#ccc" stroke-width="0.7" opacity="0.5"/>
-  <ellipse cx="700" cy="450" rx="580" ry="320" fill="none" stroke="#ddd" stroke-width="0.5" opacity="0.4"/>
-  <path d="M0,220 Q700,80 1400,220" fill="none" stroke="#ccc" stroke-width="0.6" opacity="0.4"/>
-  <path d="M0,680 Q700,820 1400,680" fill="none" stroke="#ccc" stroke-width="0.6" opacity="0.4"/>
-  <circle cx="700" cy="450" r="2" fill="#bbb" opacity="0.5"/>
+  <ellipse cx="200" cy="450" rx="155" ry="205" fill="none" stroke="#ccc" stroke-width="0.7" opacity="0.5"/>
+  <ellipse cx="1200" cy="450" rx="155" ry="205" fill="none" stroke="#ccc" stroke-width="0.7" opacity="0.5"/>
+  <ellipse cx="700" cy="450" rx="570" ry="315" fill="none" stroke="#ddd" stroke-width="0.5" opacity="0.4"/>
+  <path d="M0,200 Q700,60 1400,200" fill="none" stroke="#ccc" stroke-width="0.6" opacity="0.4"/>
+  <path d="M0,700 Q700,840 1400,700" fill="none" stroke="#ccc" stroke-width="0.6" opacity="0.4"/>
 </svg>
 
-<!-- Header -->
 <header>
-  <div class="logo-wrap">
-    <img src="logo.png" alt="زون">
-  </div>
-  <div class="header-center">Luxury Timepieces</div>
+  <div class="logo-wrap"><img src="logo.png" alt="زون"/></div>
+  <div class="header-mid">Luxury Timepieces</div>
   <div class="header-right">
-    <span>Collection</span>
-    <span>About</span>
-    <div class="cart-pill">Cart <b id="cart-n">0</b></div>
+    <button class="nav-link">المجموعة</button>
+    <button class="nav-link">عن المتجر</button>
+    <button class="theme-btn" id="theme-btn" onclick="toggleTheme()" title="تبديل المظهر"></button>
+    <div class="cart-pill" onclick="showCart()">السلة <b id="cart-n">0</b></div>
   </div>
 </header>
 
-<!-- Scene -->
-<div id="scene-wrap">
-  <div id="scene"></div>
+<div id="install-banner">
+  <img src="icons/icon-192.png" alt="زون"/>
+  <div class="ib-text">
+    <strong>أضف زون للشاشة الرئيسية</strong>
+    <span>وصول سريع لمجموعتنا الفاخرة</span>
+  </div>
+  <div class="ib-btns">
+    <button class="ib-install" id="install-btn">تثبيت</button>
+    <button class="ib-close" onclick="dismissInstall()">✕</button>
+  </div>
 </div>
 
-<!-- Filter bar -->
+<div id="scene-wrap"><div id="scene"></div></div>
+
 <div id="filter-bar">
   <button class="add-btn">+</button>
   <div class="sep"></div>
@@ -286,32 +347,70 @@ header{
 <div id="toast"></div>
 
 <script>
+// ── THEME ──
+const saved = localStorage.getItem('zone-theme') || 'light';
+document.documentElement.setAttribute('data-theme', saved);
+
+function toggleTheme(){
+  const cur = document.documentElement.getAttribute('data-theme');
+  const next = cur === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', next);
+  localStorage.setItem('zone-theme', next);
+  document.getElementById('theme-meta').content = next==='dark'?'#0a0a0a':'#f0eeeb';
+}
+
+// ── PWA INSTALL ──
+let deferredPrompt = null;
+window.addEventListener('beforeinstallprompt', e => {
+  e.preventDefault();
+  deferredPrompt = e;
+  if(!localStorage.getItem('zone-pwa-dismissed')){
+    setTimeout(()=>document.getElementById('install-banner').classList.add('show'), 3000);
+  }
+});
+document.getElementById('install-btn').addEventListener('click', async () => {
+  if(!deferredPrompt) return;
+  deferredPrompt.prompt();
+  const {outcome} = await deferredPrompt.userChoice;
+  if(outcome==='accepted') showToast('✓ تم تثبيت التطبيق بنجاح');
+  deferredPrompt = null;
+  document.getElementById('install-banner').classList.remove('show');
+});
+window.addEventListener('appinstalled', ()=>{
+  document.getElementById('install-banner').classList.remove('show');
+});
+function dismissInstall(){
+  document.getElementById('install-banner').classList.remove('show');
+  localStorage.setItem('zone-pwa-dismissed','1');
+}
+
+// ── DATA ──
 const WATCHES = [
-  {name:'رولكس سابمارينر',     price:10250, img:'watches/watch_1.png',  cat:'Sport'},
-  {name:'رولكس دايتونا',        price:15100, img:'watches/watch_2.png',  cat:'Sport'},
-  {name:'رولكس GMT-Master II', price:10900, img:'watches/watch_3.png',  cat:'Sport'},
-  {name:'رولكس داتجست 36',     price:8950,  img:'watches/watch_4.png',  cat:'Classic'},
-  {name:'رولكس أويستر بيربتشوال',price:6100,img:'watches/watch_5.png',  cat:'Classic'},
-  {name:'رولكس إكسبلورر',      price:7250,  img:'watches/watch_6.png',  cat:'Sport'},
-  {name:'رولكس سي-دويلر',      price:13250, img:'watches/watch_7.png',  cat:'Sport'},
-  {name:'رولكس يخت-ماستر',     price:12300, img:'watches/watch_8.png',  cat:'Sport'},
-  {name:'رولكس سكاي-دويلر',    price:15650, img:'watches/watch_9.png',  cat:'Classic'},
-  {name:'رولكس داي-داي 40',    price:40350, img:'watches/watch_10.png', cat:'Classic'},
-  {name:'رولكس إير-كينج',      price:7450,  img:'watches/watch_11.png', cat:'Sport'},
-  {name:'رولكس ميلغاوس',       price:9150,  img:'watches/watch_12.png', cat:'Classic'},
-  {name:'رولكس سابمارينر داي', price:10250, img:'watches/watch_1.png',  cat:'Sport'},
-  {name:'رولكس دايتونا ذهبي',  price:18100, img:'watches/watch_2.png',  cat:'Sport'},
-  {name:'رولكس GMT سبرايت',    price:11900, img:'watches/watch_3.png',  cat:'Sport'},
-  {name:'رولكس داتجست 41',     price:9950,  img:'watches/watch_4.png',  cat:'Classic'},
-  {name:'رولكس أويستر 41mm',   price:7100,  img:'watches/watch_5.png',  cat:'Classic'},
-  {name:'رولكس إكسبلورر II',   price:9250,  img:'watches/watch_6.png',  cat:'Sport'},
-  {name:'رولكس ديب سي',        price:15250, img:'watches/watch_7.png',  cat:'Sport'},
-  {name:'رولكس يخت-ماستر II',  price:18300, img:'watches/watch_8.png',  cat:'Sport'},
+  {name:'رولكس سابمارينر',       price:10250, img:'watches/watch_1.png',  cat:'Sport'},
+  {name:'رولكس دايتونا',          price:15100, img:'watches/watch_2.png',  cat:'Sport'},
+  {name:'رولكس GMT-Master II',   price:10900, img:'watches/watch_3.png',  cat:'Sport'},
+  {name:'رولكس داتجست 36',       price:8950,  img:'watches/watch_4.png',  cat:'Classic'},
+  {name:'رولكس أويستر بيربتشوال',price:6100,  img:'watches/watch_5.png',  cat:'Classic'},
+  {name:'رولكس إكسبلورر',        price:7250,  img:'watches/watch_6.png',  cat:'Sport'},
+  {name:'رولكس سي-دويلر',        price:13250, img:'watches/watch_7.png',  cat:'Sport'},
+  {name:'رولكس يخت-ماستر',       price:12300, img:'watches/watch_8.png',  cat:'Sport'},
+  {name:'رولكس سكاي-دويلر',      price:15650, img:'watches/watch_9.png',  cat:'Classic'},
+  {name:'رولكس داي-داي 40',      price:40350, img:'watches/watch_10.png', cat:'Classic'},
+  {name:'رولكس إير-كينج',        price:7450,  img:'watches/watch_11.png', cat:'Sport'},
+  {name:'رولكس ميلغاوس',         price:9150,  img:'watches/watch_12.png', cat:'Classic'},
+  {name:'رولكس سابمارينر داي',   price:10250, img:'watches/watch_1.png',  cat:'Sport'},
+  {name:'رولكس دايتونا ذهبي',    price:18100, img:'watches/watch_2.png',  cat:'Sport'},
+  {name:'رولكس GMT سبرايت',      price:11900, img:'watches/watch_3.png',  cat:'Sport'},
+  {name:'رولكس داتجست 41',       price:9950,  img:'watches/watch_4.png',  cat:'Classic'},
+  {name:'رولكس أويستر 41mm',     price:7100,  img:'watches/watch_5.png',  cat:'Classic'},
+  {name:'رولكس إكسبلورر II',     price:9250,  img:'watches/watch_6.png',  cat:'Sport'},
+  {name:'رولكس ديب سي',          price:15250, img:'watches/watch_7.png',  cat:'Sport'},
+  {name:'رولكس يخت-ماستر II',    price:18300, img:'watches/watch_8.png',  cat:'Sport'},
 ];
 
 const COLS=5,ROWS=4,SPACEX=165,SPACEY=155,SIZE=125;
-const DURS =[3.2,4.1,2.8,3.7,4.5,3.9,2.6,4.3,3.4,5.0,4.7,3.1,2.9,4.0,3.6,5.1,3.3,4.8,2.7,3.8];
-const DELAYS=[0,-.8,-1.5,-.3,-2.1,-.7,-1.2,-.4,-1.8,-.6,-2.4,-1.0,-.2,-1.6,-.9,-2.2,-.5,-1.3,-2.0,-.1];
+const DURS=[3.2,4.1,2.8,3.7,4.5,3.9,2.6,4.3,3.4,5.0,4.7,3.1,2.9,4.0,3.6,5.1,3.3,4.8,2.7,3.8];
+const DELAYS=[0,-.8,-1.5,-.3,-2.1,-.7,-1.2,-.4,-1.8,-.6,-2.4,-1,-.2,-1.6,-.9,-2.2,-.5,-1.3,-2,-.1];
 const ROTS=['-2deg','1.5deg','-1deg','2deg','-1.5deg','1deg','-2.5deg','0.5deg','-1.2deg','2.5deg','-0.8deg','1.8deg','-2deg','0.8deg','-1.5deg','2.2deg','-0.5deg','1.2deg','-2.2deg','0.3deg'];
 const BOBS=['-12px','-16px','-10px','-14px','-18px','-13px','-9px','-17px','-11px','-20px','-15px','-8px','-14px','-12px','-16px','-19px','-10px','-18px','-9px','-13px'];
 
@@ -321,10 +420,10 @@ let scrollOffset=0,mouseX=0,mouseY=0,rotX=0,rotY=0;
 
 function buildGrid(){
   scene.innerHTML='';items=[];
-  const totalW=(COLS-1)*SPACEX, totalH=(ROWS-1)*SPACEY;
+  const totalW=(COLS-1)*SPACEX,totalH=(ROWS-1)*SPACEY;
   WATCHES.forEach((w,i)=>{
-    const col=i%COLS, row=Math.floor(i/COLS);
-    const x=col*SPACEX-totalW/2, y=row*SPACEY-totalH/2;
+    const col=i%COLS,row=Math.floor(i/COLS);
+    const x=col*SPACEX-totalW/2,y=row*SPACEY-totalH/2;
     const cx=(col-(COLS-1)/2)/((COLS-1)/2);
     const cy=(row-(ROWS-1)/2)/((ROWS-1)/2);
     const dist=Math.sqrt(cx*cx+cy*cy);
@@ -349,9 +448,9 @@ function buildGrid(){
     `;
     det.querySelector('.close').onclick=e=>{e.stopPropagation();deselect()};
     det.querySelector('.dbuy').onclick=e=>{
-      e.stopPropagation();cartCount++;
-      document.getElementById('cart-n').textContent=cartCount;
-      showToast(w.name);deselect();
+      e.stopPropagation();
+      cartCount++;document.getElementById('cart-n').textContent=cartCount;
+      showToast('✓ أضيف: '+w.name);deselect();
     };
 
     wi.appendChild(img);wi.appendChild(det);
@@ -378,8 +477,7 @@ function buildGrid(){
       det.classList.add('show');
     });
 
-    scene.appendChild(wi);
-    items.push({el:wi,watch:w});
+    scene.appendChild(wi);items.push({el:wi,watch:w});
   });
   applyFilter();
 }
@@ -395,7 +493,8 @@ function deselect(){
 function applyFilter(){
   let v=0;
   items.forEach(({el,watch})=>{
-    let show=activeFilter==='All'||(activeFilter==='Sport'&&watch.cat==='Sport')
+    const show=activeFilter==='All'
+      ||(activeFilter==='Sport'&&watch.cat==='Sport')
       ||(activeFilter==='Classic'&&watch.cat==='Classic')
       ||(activeFilter==='Under $10k'&&watch.price<10000)
       ||(activeFilter==='Premium'&&watch.price>=15000);
@@ -406,11 +505,15 @@ function applyFilter(){
   document.getElementById('count-badge').textContent=v+' ساعة';
 }
 
-function showToast(name){
+let toastTimer;
+function showToast(msg){
+  clearTimeout(toastTimer);
   const t=document.getElementById('toast');
-  t.textContent='✓ أضيف: '+name;
-  t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'),2500);
+  t.textContent=msg;t.classList.add('show');
+  toastTimer=setTimeout(()=>t.classList.remove('show'),2600);
+}
+function showCart(){
+  showToast(cartCount===0?'السلة فارغة 🛒':'🛒 السلة: '+cartCount+' ساعة');
 }
 
 document.addEventListener('mousemove',e=>{
@@ -422,10 +525,9 @@ document.addEventListener('mousemove',e=>{
 function animate(){
   rotX+=(mouseY*-5-rotX)*.06;
   rotY+=(mouseX*7-rotY)*.06;
-  if(zoomedIdx===null)
-    scene.style.transform=`translate(-50%,-50%) translateY(${scrollOffset}px) rotateX(${rotX}deg) rotateY(${rotY}deg)`;
-  else
-    scene.style.transform=`translate(-50%,-50%) rotateX(0deg) rotateY(0deg)`;
+  scene.style.transform=zoomedIdx===null
+    ?`translate(-50%,-50%) translateY(${scrollOffset}px) rotateX(${rotX}deg) rotateY(${rotY}deg)`
+    :`translate(-50%,-50%) rotateX(0deg) rotateY(0deg)`;
   requestAnimationFrame(animate);
 }
 animate();
@@ -433,18 +535,27 @@ animate();
 document.getElementById('scene-wrap').addEventListener('wheel',e=>{
   if(zoomedIdx!==null)return;
   scrollOffset-=e.deltaY*.5;
-  scrollOffset=Math.max(-300,Math.min(300,scrollOffset));
-});
+  scrollOffset=Math.max(-320,Math.min(320,scrollOffset));
+},{passive:true});
+
+let lastTY=0;
+document.addEventListener('touchstart',e=>{lastTY=e.touches[0].clientY},{passive:true});
+document.addEventListener('touchmove',e=>{
+  if(zoomedIdx!==null)return;
+  const dy=lastTY-e.touches[0].clientY;
+  scrollOffset-=dy*.8;scrollOffset=Math.max(-320,Math.min(320,scrollOffset));
+  lastTY=e.touches[0].clientY;
+},{passive:true});
+
 document.getElementById('scene-wrap').addEventListener('click',e=>{
   if(e.target===document.getElementById('scene-wrap')||e.target===scene)deselect();
 });
+
 document.querySelectorAll('.fbtn').forEach(btn=>{
   btn.addEventListener('click',()=>{
     if(zoomedIdx!==null)deselect();
     document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');
-    activeFilter=btn.dataset.f;
-    applyFilter();
+    btn.classList.add('active');activeFilter=btn.dataset.f;applyFilter();
   });
 });
 
