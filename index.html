@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>3D Watches Grid</title>
+<title>زون — ساعات فاخرة</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
@@ -11,12 +11,11 @@
 
 :root{
   --bg:#f0eeeb;
-  --card:#ffffff;
   --text:#111;
-  --text2:#666;
-  --accent:#111;
-  --border:#e0ddd8;
-  --gold:#b8860b;
+  --text2:#777;
+  --border:#ddd;
+  --silver:#a8a8a8;
+  --dark:#0a0a0a;
 }
 
 html,body{
@@ -30,80 +29,80 @@ html,body{
 /* ── HEADER ── */
 header{
   position:fixed;top:0;left:0;right:0;z-index:200;
-  padding:20px 32px;
+  padding:16px 40px;
   display:flex;align-items:center;justify-content:space-between;
+  background:rgba(240,238,235,0.85);
+  backdrop-filter:blur(12px);
+  border-bottom:1px solid rgba(0,0,0,0.06);
 }
-.logo{
+
+/* Logo */
+.logo-wrap{
+  display:flex;align-items:center;
+  height:48px;
+}
+.logo-wrap img{
+  height:48px;width:48px;
+  object-fit:contain;
+  filter:invert(1) brightness(0.15);
+}
+
+.header-center{
+  position:absolute;left:50%;transform:translateX(-50%);
   font-family:'Space Mono',monospace;
-  font-size:15px;font-weight:700;
-  letter-spacing:0.05em;
-  color:var(--text);
-}
-.logo sup{font-size:8px;vertical-align:super;opacity:.5}
-.header-right{display:flex;align-items:center;gap:24px}
-.header-right span{
-  font-size:11px;letter-spacing:0.15em;
+  font-size:9px;letter-spacing:0.35em;
   text-transform:uppercase;color:var(--text2);
-  cursor:pointer;
+}
+
+.header-right{display:flex;align-items:center;gap:28px}
+.header-right span{
+  font-size:10px;letter-spacing:0.18em;
+  text-transform:uppercase;color:var(--text2);
+  cursor:pointer;transition:color .2s;
 }
 .header-right span:hover{color:var(--text)}
+.cart-pill{
+  display:flex;align-items:center;gap:8px;
+  border:1px solid var(--border);
+  padding:7px 16px;border-radius:40px;
+  font-size:10px;letter-spacing:.15em;
+  text-transform:uppercase;color:var(--text2);
+  cursor:pointer;transition:all .2s;
+}
+.cart-pill:hover{border-color:var(--text);color:var(--text)}
+.cart-pill b{
+  background:var(--dark);color:#fff;
+  border-radius:50%;width:16px;height:16px;
+  display:flex;align-items:center;justify-content:center;
+  font-size:8px;font-weight:700;
+}
 
-/* ── BIG TITLE ── */
-#big-title{
-  position:fixed;top:52px;left:32px;z-index:10;
-  pointer-events:none;
-  animation:titleIn .7s cubic-bezier(.23,1,.32,1) both;
-}
-@keyframes titleIn{
-  from{opacity:0;transform:translateY(-12px)}
-  to{opacity:1;transform:translateY(0)}
-}
-#big-title h1{
-  font-family:'Space Mono',monospace;
-  font-size:clamp(28px,5vw,52px);
-  font-weight:700;
-  letter-spacing:0.1em;
-  text-transform:uppercase;
-  color:var(--text);
-  line-height:1;
-}
-#big-title h1 .emoji{
-  display:inline-block;
-  animation:bounce 2s ease-in-out infinite;
-}
-@keyframes bounce{
-  0%,100%{transform:translateY(0)}
-  50%{transform:translateY(-6px)}
+/* ── DECORATIVE BACKGROUND ── */
+#deco{
+  position:fixed;inset:0;pointer-events:none;z-index:1;
 }
 
 /* ── SCENE ── */
 #scene-wrap{
-  position:fixed;inset:0;
-  overflow:hidden;
+  position:fixed;inset:0;overflow:hidden;
 }
-
-/* 3D perspective container */
 #scene{
-  position:absolute;
-  left:50%;top:50%;
+  position:absolute;left:50%;top:50%;
   transform:translate(-50%,-50%);
   transform-style:preserve-3d;
-  transition:transform 0.5s cubic-bezier(.23,1,.32,1);
 }
 
-/* ── WATCH ITEM ── */
+/* ── WATCH ITEMS ── */
 .wi{
   position:absolute;
   transform-style:preserve-3d;
-  transition:opacity 0.4s ease;
+  transition:opacity 0.35s ease;
 }
 .wi img{
-  display:block;
-  object-fit:contain;
+  display:block;object-fit:contain;
   pointer-events:none;
-  transition:transform 0.5s cubic-bezier(.23,1,.32,1),
-              filter 0.4s ease;
-  filter:drop-shadow(0 12px 32px rgba(0,0,0,0.18)) drop-shadow(0 2px 8px rgba(0,0,0,0.10));
+  transition:transform 0.5s cubic-bezier(.23,1,.32,1), filter 0.4s ease;
+  filter:drop-shadow(0 12px 32px rgba(0,0,0,0.15)) drop-shadow(0 2px 8px rgba(0,0,0,0.08));
   animation:wfloat var(--dur,3.5s) ease-in-out infinite;
   animation-delay:var(--delay,0s);
 }
@@ -111,183 +110,156 @@ header{
   0%,100%{transform:translateY(0) rotate(var(--rot,0deg))}
   50%{transform:translateY(var(--bob,-12px)) rotate(var(--rot,0deg))}
 }
-
-/* hover */
 .wi.hovering img{
-  filter:drop-shadow(0 20px 48px rgba(0,0,0,0.22));
-  transform:translateY(-6px) scale(1.06) rotate(var(--rot,0deg)) !important;
-  animation-play-state:paused;
-  cursor:pointer;
+  filter:drop-shadow(0 24px 56px rgba(0,0,0,0.22)) drop-shadow(0 4px 16px rgba(0,0,0,0.12));
+  transform:translateY(-8px) scale(1.07) rotate(var(--rot,0deg)) !important;
+  animation-play-state:paused;cursor:pointer;
 }
-/* faded (when another is selected) */
-.wi.faded{opacity:0.1 !important}
-/* zoomed in (clicked) */
+.wi.faded{opacity:0.08 !important}
 .wi.zoomed img{
   transform:scale(1.65) rotate(0deg) !important;
-  filter:drop-shadow(0 30px 70px rgba(0,0,0,0.28)) !important;
+  filter:drop-shadow(0 32px 80px rgba(0,0,0,0.25)) !important;
   animation-play-state:paused;
 }
 
 /* ── DETAIL CARD ── */
 .detail{
-  position:absolute;
-  left:50%;
-  top:calc(100% + 4px);
-  transform:translateX(-50%) translateY(8px);
-  width:180px;
+  position:absolute;left:50%;
+  top:calc(100% + 6px);
+  transform:translateX(-50%) translateY(10px);
+  width:190px;
   background:#fff;
   border:1px solid var(--border);
-  border-radius:2px;
-  padding:16px;
-  opacity:0;
-  pointer-events:none;
-  transition:opacity .3s ease, transform .3s ease;
-  z-index:300;
-  text-align:center;
-  box-shadow:0 8px 40px rgba(0,0,0,0.10);
+  border-radius:3px;
+  padding:18px;
+  opacity:0;pointer-events:none;
+  transition:opacity .3s, transform .3s;
+  z-index:300;text-align:center;
+  box-shadow:0 12px 48px rgba(0,0,0,0.10);
 }
-.detail.show{
-  opacity:1;
-  transform:translateX(-50%) translateY(0);
-  pointer-events:all;
-}
+.detail.show{opacity:1;transform:translateX(-50%) translateY(0);pointer-events:all}
 .detail .close{
-  position:absolute;top:6px;right:6px;
+  position:absolute;top:8px;right:8px;
   width:20px;height:20px;
-  border:1px solid var(--border);
-  background:none;border-radius:50%;
-  font-size:10px;cursor:pointer;
+  border:1px solid var(--border);background:none;border-radius:50%;
+  font-size:9px;cursor:pointer;
   display:flex;align-items:center;justify-content:center;
-  color:var(--text2);
-  transition:all .2s;
+  color:var(--text2);transition:all .2s;
 }
-.detail .close:hover{background:var(--text);color:#fff;border-color:var(--text)}
-.detail .dname{
-  font-size:12px;font-weight:600;
-  color:var(--text);line-height:1.3;margin-bottom:4px;
-}
-.detail .dcat{
-  font-size:9px;letter-spacing:.2em;
-  text-transform:uppercase;color:var(--text2);margin-bottom:10px;
-}
+.detail .close:hover{background:var(--dark);color:#fff;border-color:var(--dark)}
+.detail .dcat{font-size:8px;letter-spacing:.22em;text-transform:uppercase;color:var(--silver);margin-bottom:5px}
+.detail .dname{font-size:12px;font-weight:600;color:var(--text);line-height:1.3;margin-bottom:10px}
 .detail .dprice{
   font-family:'Space Mono',monospace;
-  font-size:16px;font-weight:700;
-  color:var(--text);margin-bottom:12px;
+  font-size:17px;font-weight:700;color:var(--dark);margin-bottom:13px;
 }
 .detail .dbuy{
-  width:100%;padding:9px;
-  background:var(--text);color:#fff;
-  border:none;border-radius:1px;
-  font-size:10px;font-weight:600;
-  letter-spacing:.15em;text-transform:uppercase;
-  cursor:pointer;
-  transition:background .2s;
+  width:100%;padding:10px;
+  background:var(--dark);color:#fff;
+  border:none;border-radius:2px;
+  font-size:9px;font-weight:600;letter-spacing:.2em;text-transform:uppercase;
+  cursor:pointer;transition:background .2s;
 }
 .detail .dbuy:hover{background:#333}
 
 /* ── FILTER BAR ── */
 #filter-bar{
-  position:fixed;bottom:28px;left:50%;
-  transform:translateX(-50%);
-  z-index:200;
-  display:flex;align-items:center;gap:0;
+  position:fixed;bottom:32px;left:50%;
+  transform:translateX(-50%);z-index:200;
+  display:flex;align-items:center;
   background:#fff;
   border:1px solid var(--border);
-  border-radius:40px;
-  padding:5px 5px;
-  box-shadow:0 4px 24px rgba(0,0,0,0.08);
+  border-radius:50px;
+  padding:5px;
+  box-shadow:0 4px 32px rgba(0,0,0,0.07);
   animation:barIn .6s .3s cubic-bezier(.23,1,.32,1) both;
+  gap:2px;
 }
 @keyframes barIn{
   from{opacity:0;transform:translateX(-50%) translateY(16px)}
   to{opacity:1;transform:translateX(-50%) translateY(0)}
 }
 .add-btn{
-  width:30px;height:30px;border-radius:50%;
-  background:var(--text);color:#fff;
-  border:none;font-size:16px;
-  display:flex;align-items:center;justify-content:center;
-  cursor:pointer;margin-right:4px;
-  flex-shrink:0;
+  width:32px;height:32px;border-radius:50%;
+  background:var(--dark);color:#fff;border:none;
+  font-size:18px;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;flex-shrink:0;margin-right:2px;
+  transition:background .2s;
 }
-.sep{width:1px;height:16px;background:var(--border);margin:0 2px}
+.add-btn:hover{background:#333}
+.sep{width:1px;height:14px;background:var(--border);margin:0 1px}
 .fbtn{
   background:none;border:none;
-  padding:7px 14px;border-radius:30px;
-  font-size:11px;font-weight:500;
-  letter-spacing:.05em;
-  color:var(--text2);cursor:pointer;
-  transition:all .2s;white-space:nowrap;
+  padding:7px 15px;border-radius:30px;
+  font-size:10px;font-weight:500;letter-spacing:.08em;
+  color:var(--text2);cursor:pointer;transition:all .2s;
+  white-space:nowrap;
 }
 .fbtn:hover{color:var(--text)}
-.fbtn.active{
-  background:var(--text);color:#fff;
-}
+.fbtn.active{background:var(--dark);color:#fff}
 
-/* ── DECORATIVE LINES (background svg like in video) ── */
-#deco{
-  position:fixed;inset:0;pointer-events:none;z-index:1;
-  opacity:0.35;
-}
-
-/* ── COUNT ── */
+/* ── BOTTOM INFO ── */
 #count-badge{
-  position:fixed;bottom:28px;right:32px;z-index:200;
+  position:fixed;bottom:32px;right:40px;z-index:200;
   font-family:'Space Mono',monospace;
-  font-size:10px;color:var(--text2);
-  letter-spacing:.1em;
+  font-size:9px;color:var(--text2);letter-spacing:.12em;
+  text-transform:uppercase;
   animation:barIn .6s .5s both;
 }
-
-/* ── SCROLL INDICATOR ── */
 #scroll-hint{
-  position:fixed;bottom:28px;left:32px;z-index:200;
+  position:fixed;bottom:32px;left:40px;z-index:200;
   display:flex;align-items:center;gap:8px;
   animation:barIn .6s .6s both;
 }
-#scroll-hint span{
-  font-size:9px;letter-spacing:.15em;
-  text-transform:uppercase;color:var(--text2);
-}
-.scroll-arrow{
-  width:16px;height:16px;
-  border-right:1px solid var(--text2);
-  border-bottom:1px solid var(--text2);
+#scroll-hint span{font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--text2)}
+.scroll-arr{
+  width:14px;height:14px;
+  border-right:1px solid var(--text2);border-bottom:1px solid var(--text2);
   transform:rotate(45deg);
-  animation:arrowPulse 1.5s ease-in-out infinite;
+  animation:ap 1.5s ease-in-out infinite;
 }
-@keyframes arrowPulse{
+@keyframes ap{
   0%,100%{opacity:.3;transform:rotate(45deg) translate(0,0)}
   50%{opacity:1;transform:rotate(45deg) translate(2px,2px)}
 }
+
+/* ── TOAST ── */
+#toast{
+  position:fixed;top:80px;right:40px;z-index:500;
+  background:var(--dark);color:#fff;
+  padding:13px 20px;border-radius:3px;
+  font-size:10px;letter-spacing:.12em;
+  opacity:0;pointer-events:none;
+  transition:opacity .3s;
+  box-shadow:0 8px 32px rgba(0,0,0,0.2);
+}
+#toast.show{opacity:1}
 </style>
 </head>
 <body>
 
-<!-- Decorative background lines like in the video -->
-<svg id="deco" viewBox="0 0 1000 800" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
-  <ellipse cx="180" cy="400" rx="140" ry="180" fill="none" stroke="#999" stroke-width="0.8" opacity="0.5"/>
-  <ellipse cx="820" cy="400" rx="140" ry="180" fill="none" stroke="#999" stroke-width="0.8" opacity="0.5"/>
-  <ellipse cx="500" cy="400" rx="420" ry="280" fill="none" stroke="#bbb" stroke-width="0.5" opacity="0.4"/>
-  <path d="M100,200 Q500,100 900,200" fill="none" stroke="#ccc" stroke-width="0.6" opacity="0.5"/>
-  <path d="M100,600 Q500,700 900,600" fill="none" stroke="#ccc" stroke-width="0.6" opacity="0.5"/>
+<!-- Decorative SVG background -->
+<svg id="deco" viewBox="0 0 1400 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
+  <ellipse cx="200" cy="450" rx="160" ry="210" fill="none" stroke="#ccc" stroke-width="0.7" opacity="0.5"/>
+  <ellipse cx="1200" cy="450" rx="160" ry="210" fill="none" stroke="#ccc" stroke-width="0.7" opacity="0.5"/>
+  <ellipse cx="700" cy="450" rx="580" ry="320" fill="none" stroke="#ddd" stroke-width="0.5" opacity="0.4"/>
+  <path d="M0,220 Q700,80 1400,220" fill="none" stroke="#ccc" stroke-width="0.6" opacity="0.4"/>
+  <path d="M0,680 Q700,820 1400,680" fill="none" stroke="#ccc" stroke-width="0.6" opacity="0.4"/>
+  <circle cx="700" cy="450" r="2" fill="#bbb" opacity="0.5"/>
 </svg>
 
 <!-- Header -->
 <header>
-  <div class="logo">ZONE<sup>™</sup></div>
+  <div class="logo-wrap">
+    <img src="logo.png" alt="زون">
+  </div>
+  <div class="header-center">Luxury Timepieces</div>
   <div class="header-right">
     <span>Collection</span>
     <span>About</span>
-    <span>Cart <b id="cart-n">0</b></span>
+    <div class="cart-pill">Cart <b id="cart-n">0</b></div>
   </div>
 </header>
-
-<!-- Big title -->
-<div id="big-title">
-  <h1>3D WATCHES GRID <span class="emoji">⌚</span></h1>
-</div>
 
 <!-- Scene -->
 <div id="scene-wrap">
@@ -298,168 +270,122 @@ header{
 <div id="filter-bar">
   <button class="add-btn">+</button>
   <div class="sep"></div>
-  <button class="fbtn active" data-f="All">All</button>
+  <button class="fbtn active" data-f="All">الكل</button>
   <div class="sep"></div>
-  <button class="fbtn" data-f="Sport">Sport</button>
+  <button class="fbtn" data-f="Sport">رياضي</button>
   <div class="sep"></div>
-  <button class="fbtn" data-f="Classic">Classic</button>
+  <button class="fbtn" data-f="Classic">كلاسيك</button>
   <div class="sep"></div>
-  <button class="fbtn" data-f="Under $10k">Under $10k</button>
+  <button class="fbtn" data-f="Under $10k">تحت $10k</button>
   <div class="sep"></div>
-  <button class="fbtn" data-f="Premium">Premium</button>
+  <button class="fbtn" data-f="Premium">بريميوم</button>
 </div>
 
-<div id="count-badge">20 Pieces</div>
-
-<div id="scroll-hint">
-  <span>Scroll</span>
-  <div class="scroll-arrow"></div>
-</div>
+<div id="count-badge">20 ساعة</div>
+<div id="scroll-hint"><span>Scroll</span><div class="scroll-arr"></div></div>
+<div id="toast"></div>
 
 <script>
 const WATCHES = [
-  {name:'Rolex Submariner',    price:10250, img:'watches/watch_1.png',  cat:'Sport'},
-  {name:'Rolex Daytona',       price:15100, img:'watches/watch_2.png',  cat:'Sport'},
-  {name:'Rolex GMT-Master II', price:10900, img:'watches/watch_3.png',  cat:'Sport'},
-  {name:'Rolex Datejust 36',   price:8950,  img:'watches/watch_4.png',  cat:'Classic'},
-  {name:'Rolex Oyster Perpetual',price:6100,img:'watches/watch_5.png',  cat:'Classic'},
-  {name:'Rolex Explorer',      price:7250,  img:'watches/watch_6.png',  cat:'Sport'},
-  {name:'Rolex Sea-Dweller',   price:13250, img:'watches/watch_7.png',  cat:'Sport'},
-  {name:'Rolex Yacht-Master',  price:12300, img:'watches/watch_8.png',  cat:'Sport'},
-  {name:'Rolex Sky-Dweller',   price:15650, img:'watches/watch_9.png',  cat:'Classic'},
-  {name:'Rolex Day-Date 40',   price:40350, img:'watches/watch_10.png', cat:'Classic'},
-  {name:'Rolex Air-King',      price:7450,  img:'watches/watch_11.png', cat:'Sport'},
-  {name:'Rolex Milgauss',      price:9150,  img:'watches/watch_12.png', cat:'Classic'},
-  {name:'Rolex Submariner Date',price:10250,img:'watches/watch_1.png',  cat:'Sport'},
-  {name:'Rolex Daytona Gold',  price:18100, img:'watches/watch_2.png',  cat:'Sport'},
-  {name:'Rolex GMT Sprite',    price:11900, img:'watches/watch_3.png',  cat:'Sport'},
-  {name:'Rolex Datejust 41',   price:9950,  img:'watches/watch_4.png',  cat:'Classic'},
-  {name:'Rolex Oyster 41mm',   price:7100,  img:'watches/watch_5.png',  cat:'Classic'},
-  {name:'Rolex Explorer II',   price:9250,  img:'watches/watch_6.png',  cat:'Sport'},
-  {name:'Rolex DeepSea',       price:15250, img:'watches/watch_7.png',  cat:'Sport'},
-  {name:'Rolex Yacht-Master II',price:18300,img:'watches/watch_8.png',  cat:'Sport'},
+  {name:'رولكس سابمارينر',     price:10250, img:'watches/watch_1.png',  cat:'Sport'},
+  {name:'رولكس دايتونا',        price:15100, img:'watches/watch_2.png',  cat:'Sport'},
+  {name:'رولكس GMT-Master II', price:10900, img:'watches/watch_3.png',  cat:'Sport'},
+  {name:'رولكس داتجست 36',     price:8950,  img:'watches/watch_4.png',  cat:'Classic'},
+  {name:'رولكس أويستر بيربتشوال',price:6100,img:'watches/watch_5.png',  cat:'Classic'},
+  {name:'رولكس إكسبلورر',      price:7250,  img:'watches/watch_6.png',  cat:'Sport'},
+  {name:'رولكس سي-دويلر',      price:13250, img:'watches/watch_7.png',  cat:'Sport'},
+  {name:'رولكس يخت-ماستر',     price:12300, img:'watches/watch_8.png',  cat:'Sport'},
+  {name:'رولكس سكاي-دويلر',    price:15650, img:'watches/watch_9.png',  cat:'Classic'},
+  {name:'رولكس داي-داي 40',    price:40350, img:'watches/watch_10.png', cat:'Classic'},
+  {name:'رولكس إير-كينج',      price:7450,  img:'watches/watch_11.png', cat:'Sport'},
+  {name:'رولكس ميلغاوس',       price:9150,  img:'watches/watch_12.png', cat:'Classic'},
+  {name:'رولكس سابمارينر داي', price:10250, img:'watches/watch_1.png',  cat:'Sport'},
+  {name:'رولكس دايتونا ذهبي',  price:18100, img:'watches/watch_2.png',  cat:'Sport'},
+  {name:'رولكس GMT سبرايت',    price:11900, img:'watches/watch_3.png',  cat:'Sport'},
+  {name:'رولكس داتجست 41',     price:9950,  img:'watches/watch_4.png',  cat:'Classic'},
+  {name:'رولكس أويستر 41mm',   price:7100,  img:'watches/watch_5.png',  cat:'Classic'},
+  {name:'رولكس إكسبلورر II',   price:9250,  img:'watches/watch_6.png',  cat:'Sport'},
+  {name:'رولكس ديب سي',        price:15250, img:'watches/watch_7.png',  cat:'Sport'},
+  {name:'رولكس يخت-ماستر II',  price:18300, img:'watches/watch_8.png',  cat:'Sport'},
 ];
 
-// Grid: 5 cols × 4 rows — curved (center items pushed forward in Z)
-// Layout matches the video exactly: curved 3D grid
-const COLS = 5, ROWS = 4;
-const SPACEX = 160, SPACEY = 150;
-const IMG_SIZE = 120;
+const COLS=5,ROWS=4,SPACEX=165,SPACEY=155,SIZE=125;
+const DURS =[3.2,4.1,2.8,3.7,4.5,3.9,2.6,4.3,3.4,5.0,4.7,3.1,2.9,4.0,3.6,5.1,3.3,4.8,2.7,3.8];
+const DELAYS=[0,-.8,-1.5,-.3,-2.1,-.7,-1.2,-.4,-1.8,-.6,-2.4,-1.0,-.2,-1.6,-.9,-2.2,-.5,-1.3,-2.0,-.1];
+const ROTS=['-2deg','1.5deg','-1deg','2deg','-1.5deg','1deg','-2.5deg','0.5deg','-1.2deg','2.5deg','-0.8deg','1.8deg','-2deg','0.8deg','-1.5deg','2.2deg','-0.5deg','1.2deg','-2.2deg','0.3deg'];
+const BOBS=['-12px','-16px','-10px','-14px','-18px','-13px','-9px','-17px','-11px','-20px','-15px','-8px','-14px','-12px','-16px','-19px','-10px','-18px','-9px','-13px'];
 
-// Float params
-const DURS  = [3.2,4.1,2.8,3.7,4.5,3.9,2.6,4.3,3.4,5.0,4.7,3.1,2.9,4.0,3.6,5.1,3.3,4.8,2.7,3.8];
-const DELAYS= [0,-.8,-1.5,-.3,-2.1,-.7,-1.2,-.4,-1.8,-.6,-2.4,-1.0,-.2,-1.6,-.9,-2.2,-.5,-1.3,-2.0,-.1];
-const ROTS  = ['-2deg','1.5deg','-1deg','2deg','-1.5deg','1deg','-2.5deg','0.5deg','-1.2deg','2.5deg',
-               '-0.8deg','1.8deg','-2deg','0.8deg','-1.5deg','2.2deg','-0.5deg','1.2deg','-2.2deg','0.3deg'];
-const BOBS  = ['-12px','-16px','-10px','-14px','-18px','-13px','-9px','-17px','-11px','-20px',
-               '-15px','-8px','-14px','-12px','-16px','-19px','-10px','-18px','-9px','-13px'];
+const scene=document.getElementById('scene');
+let items=[],activeFilter='All',zoomedIdx=null,cartCount=0;
+let scrollOffset=0,mouseX=0,mouseY=0,rotX=0,rotY=0;
 
-const scene = document.getElementById('scene');
-let items = [];
-let activeFilter = 'All';
-let zoomedIdx = null;
-let cartCount = 0;
-let scrollOffset = 0; // vertical scroll for the grid
-let mouseX = 0, mouseY = 0;
-let rotX = 0, rotY = 0;
-
-// Build grid
 function buildGrid(){
-  scene.innerHTML = '';
-  items = [];
-
-  const totalW = (COLS-1) * SPACEX;
-  const totalH = (ROWS-1) * SPACEY;
-
+  scene.innerHTML='';items=[];
+  const totalW=(COLS-1)*SPACEX, totalH=(ROWS-1)*SPACEY;
   WATCHES.forEach((w,i)=>{
-    const col = i % COLS;
-    const row = Math.floor(i / COLS);
+    const col=i%COLS, row=Math.floor(i/COLS);
+    const x=col*SPACEX-totalW/2, y=row*SPACEY-totalH/2;
+    const cx=(col-(COLS-1)/2)/((COLS-1)/2);
+    const cy=(row-(ROWS-1)/2)/((ROWS-1)/2);
+    const dist=Math.sqrt(cx*cx+cy*cy);
+    const z=-dist*dist*75;
 
-    const x = col * SPACEX - totalW/2;
-    const y = row * SPACEY - totalH/2;
+    const wi=document.createElement('div');
+    wi.className='wi';
+    wi.style.cssText=`width:${SIZE}px;left:${x-SIZE/2}px;top:${y-SIZE/2}px;--rot:${ROTS[i]};--bob:${BOBS[i]};--dur:${DURS[i]}s;--delay:${DELAYS[i]}s;transform:translateZ(${z}px);z-index:${Math.round(100-dist*10)};`;
 
-    // Curved Z: items near center pushed forward, edges pushed back
-    const cx = (col - (COLS-1)/2) / ((COLS-1)/2);
-    const cy = (row - (ROWS-1)/2) / ((ROWS-1)/2);
-    const dist = Math.sqrt(cx*cx + cy*cy);
-    const z = -dist * dist * 80; // curved bowl shape
+    const img=document.createElement('img');
+    img.src=w.img;img.alt=w.name;
+    img.style.cssText=`width:${SIZE}px;height:${SIZE}px;`;
 
-    const wi = document.createElement('div');
-    wi.className = 'wi';
-    wi.style.cssText = `
-      width:${IMG_SIZE}px;
-      left:${x - IMG_SIZE/2}px;
-      top:${y - IMG_SIZE/2}px;
-      --rot:${ROTS[i]};
-      --bob:${BOBS[i]};
-      --dur:${DURS[i]}s;
-      --delay:${DELAYS[i]}s;
-      transform:translateZ(${z}px);
-      z-index:${Math.round(100 - dist*10)};
-    `;
-
-    const img = document.createElement('img');
-    img.src = w.img;
-    img.alt = w.name;
-    img.width = IMG_SIZE;
-    img.height = IMG_SIZE;
-    img.style.cssText = `width:${IMG_SIZE}px;height:${IMG_SIZE}px;`;
-
-    // Detail card
-    const det = document.createElement('div');
-    det.className = 'detail';
-    det.innerHTML = `
+    const det=document.createElement('div');
+    det.className='detail';
+    det.innerHTML=`
       <button class="close">✕</button>
-      <div class="dcat">${w.cat}</div>
+      <div class="dcat">${w.cat==='Sport'?'رياضي':'كلاسيك'}</div>
       <div class="dname">${w.name}</div>
       <div class="dprice">$${w.price.toLocaleString()}</div>
-      <button class="dbuy">Buy Now</button>
+      <button class="dbuy">أضف للسلة</button>
     `;
-
-    det.querySelector('.close').onclick = e => { e.stopPropagation(); deselect(); };
-    det.querySelector('.dbuy').onclick = e => {
-      e.stopPropagation();
-      cartCount++;
-      document.getElementById('cart-n').textContent = cartCount;
-      deselect();
+    det.querySelector('.close').onclick=e=>{e.stopPropagation();deselect()};
+    det.querySelector('.dbuy').onclick=e=>{
+      e.stopPropagation();cartCount++;
+      document.getElementById('cart-n').textContent=cartCount;
+      showToast(w.name);deselect();
     };
 
-    wi.appendChild(img);
-    wi.appendChild(det);
+    wi.appendChild(img);wi.appendChild(det);
 
-    // Events
-    wi.addEventListener('mouseenter', ()=>{
-      if(zoomedIdx !== null) return;
+    wi.addEventListener('mouseenter',()=>{
+      if(zoomedIdx!==null)return;
       wi.classList.add('hovering');
-      items.forEach((it,j)=>{ if(j!==i) it.el.classList.add('faded'); });
+      items.forEach((it,j)=>{if(j!==i)it.el.classList.add('faded')});
     });
-    wi.addEventListener('mouseleave', ()=>{
-      if(zoomedIdx !== null) return;
+    wi.addEventListener('mouseleave',()=>{
+      if(zoomedIdx!==null)return;
       wi.classList.remove('hovering');
-      items.forEach(it => it.el.classList.remove('faded'));
+      items.forEach(it=>it.el.classList.remove('faded'));
     });
-    wi.addEventListener('click', ()=>{
-      if(zoomedIdx === i){ deselect(); return; }
-      zoomedIdx = i;
-      // zoom this one
+    wi.addEventListener('click',()=>{
+      if(zoomedIdx===i){deselect();return}
+      zoomedIdx=i;
       items.forEach((it,j)=>{
         it.el.classList.remove('zoomed','hovering','faded');
-        if(j===i){ it.el.classList.add('zoomed'); }
-        else { it.el.classList.add('faded'); }
         it.el.querySelector('.detail').classList.remove('show');
+        if(j===i)it.el.classList.add('zoomed');
+        else it.el.classList.add('faded');
       });
       det.classList.add('show');
     });
 
     scene.appendChild(wi);
-    items.push({ el:wi, watch:w, z, baseZ:z });
+    items.push({el:wi,watch:w});
   });
-
   applyFilter();
 }
 
 function deselect(){
-  zoomedIdx = null;
+  zoomedIdx=null;
   items.forEach(it=>{
     it.el.classList.remove('zoomed','faded','hovering');
     it.el.querySelector('.detail').classList.remove('show');
@@ -467,74 +393,57 @@ function deselect(){
 }
 
 function applyFilter(){
-  let visible = 0;
+  let v=0;
   items.forEach(({el,watch})=>{
-    let show = false;
-    if(activeFilter==='All') show=true;
-    else if(activeFilter==='Sport') show=watch.cat==='Sport';
-    else if(activeFilter==='Classic') show=watch.cat==='Classic';
-    else if(activeFilter==='Under $10k') show=watch.price<10000;
-    else if(activeFilter==='Premium') show=watch.price>=15000;
-    el.style.opacity = show ? '' : '0';
-    el.style.pointerEvents = show ? '' : 'none';
-    if(show) visible++;
+    let show=activeFilter==='All'||(activeFilter==='Sport'&&watch.cat==='Sport')
+      ||(activeFilter==='Classic'&&watch.cat==='Classic')
+      ||(activeFilter==='Under $10k'&&watch.price<10000)
+      ||(activeFilter==='Premium'&&watch.price>=15000);
+    el.style.opacity=show?'':'0';
+    el.style.pointerEvents=show?'':'none';
+    if(show)v++;
   });
-  document.getElementById('count-badge').textContent = visible + ' Pieces';
+  document.getElementById('count-badge').textContent=v+' ساعة';
 }
 
-// Mouse parallax — tilt the whole scene like in the video
-document.addEventListener('mousemove', e=>{
-  if(zoomedIdx !== null) return;
-  mouseX = (e.clientX/window.innerWidth  - 0.5) * 2;
-  mouseY = (e.clientY/window.innerHeight - 0.5) * 2;
+function showToast(name){
+  const t=document.getElementById('toast');
+  t.textContent='✓ أضيف: '+name;
+  t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2500);
+}
+
+document.addEventListener('mousemove',e=>{
+  if(zoomedIdx!==null)return;
+  mouseX=(e.clientX/window.innerWidth-.5)*2;
+  mouseY=(e.clientY/window.innerHeight-.5)*2;
 });
 
-// Smooth rotation animation
 function animate(){
-  rotX += (mouseY * -6 - rotX) * 0.06;
-  rotY += (mouseX *  8 - rotY) * 0.06;
-
-  if(zoomedIdx === null){
-    scene.style.transform = `translate(-50%,-50%) translateY(${scrollOffset}px) rotateX(${rotX}deg) rotateY(${rotY}deg)`;
-  } else {
-    scene.style.transform = `translate(-50%,-50%) rotateX(0deg) rotateY(0deg)`;
-  }
+  rotX+=(mouseY*-5-rotX)*.06;
+  rotY+=(mouseX*7-rotY)*.06;
+  if(zoomedIdx===null)
+    scene.style.transform=`translate(-50%,-50%) translateY(${scrollOffset}px) rotateX(${rotX}deg) rotateY(${rotY}deg)`;
+  else
+    scene.style.transform=`translate(-50%,-50%) rotateX(0deg) rotateY(0deg)`;
   requestAnimationFrame(animate);
 }
 animate();
 
-// Scroll to move grid vertically (like in video)
-document.getElementById('scene-wrap').addEventListener('wheel', e=>{
-  if(zoomedIdx !== null) return;
-  scrollOffset -= e.deltaY * 0.5;
-  scrollOffset = Math.max(-300, Math.min(300, scrollOffset));
+document.getElementById('scene-wrap').addEventListener('wheel',e=>{
+  if(zoomedIdx!==null)return;
+  scrollOffset-=e.deltaY*.5;
+  scrollOffset=Math.max(-300,Math.min(300,scrollOffset));
 });
-
-// Touch scroll
-let lastTY = 0;
-document.addEventListener('touchstart', e=>{ lastTY = e.touches[0].clientY; });
-document.addEventListener('touchmove', e=>{
-  if(zoomedIdx !== null) return;
-  const dy = lastTY - e.touches[0].clientY;
-  scrollOffset -= dy * 0.8;
-  scrollOffset = Math.max(-300, Math.min(300, scrollOffset));
-  lastTY = e.touches[0].clientY;
+document.getElementById('scene-wrap').addEventListener('click',e=>{
+  if(e.target===document.getElementById('scene-wrap')||e.target===scene)deselect();
 });
-
-// Click outside to deselect
-document.getElementById('scene-wrap').addEventListener('click', e=>{
-  if(e.target === document.getElementById('scene-wrap') || e.target === scene){
-    deselect();
-  }
-});
-
-// Filter buttons
 document.querySelectorAll('.fbtn').forEach(btn=>{
-  btn.addEventListener('click', ()=>{
-    if(zoomedIdx !== null) deselect();
+  btn.addEventListener('click',()=>{
+    if(zoomedIdx!==null)deselect();
     document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('active'));
     btn.classList.add('active');
-    activeFilter = btn.dataset.f;
+    activeFilter=btn.dataset.f;
     applyFilter();
   });
 });
