@@ -70,17 +70,21 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;padding:12px 32px;display
   animation-delay:var(--delay,0s);
 }
 @keyframes ringPulse{0%,100%{opacity:.3;transform:scale(0.95)}50%{opacity:.8;transform:scale(1.05)}}
-.wi-placeholder::after{
+.wi-placeholder{display:none !important;}
+.wi-placeholder-DISABLED::after{
   content:'⌚';font-size:28px;opacity:0.18;
   filter:grayscale(1);
   transition:opacity .3s;
 }
 .wi img{
-  display:none; /* hidden until clicked */
+  display:block;
   object-fit:contain;pointer-events:none;
   width:100%;height:100%;
   position:absolute;inset:0;
   filter:drop-shadow(0 10px 28px rgba(0,0,0,0.15));
+  animation:wfloat var(--dur,3.5s) ease-in-out infinite;
+  animation-delay:var(--delay,0s);
+  transition:transform 0.4s cubic-bezier(.23,1,.32,1), filter 0.3s;
 }
 [data-theme="dark"] .wi img{filter:drop-shadow(0 10px 32px rgba(0,0,0,0.7));}
 
@@ -90,13 +94,17 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;padding:12px 32px;display
 }
 
 /* HOVER effect on placeholder */
-.wi.hovering .wi-placeholder{
+.wi.hovering img{transform:translateY(-8px) scale(1.1) !important;animation-play-state:paused;}
+.wi.hovering-OLD .wi-placeholder{
   background:radial-gradient(circle, rgba(180,150,100,0.35) 0%, transparent 70%);
   transform:translateY(-8px) scale(1.12) rotate(var(--rot,0deg)) !important;
   animation-play-state:paused;
 }
-.wi.hovering .wi-placeholder::after{opacity:0.45;}
-[data-theme="dark"] .wi.hovering .wi-placeholder{background:radial-gradient(circle, rgba(255,255,255,0.12) 0%, transparent 70%);}
+.wi.hovering img{transform:translateY(-8px) scale(1.1) !important;animation-play-state:paused;}
+.wi.hovering-OLD .wi-placeholder{display:none !important;}
+.wi-placeholder-DISABLED::after{opacity:0.45;}
+[data-theme="dark"] .wi.hovering img{transform:translateY(-8px) scale(1.1) !important;animation-play-state:paused;}
+.wi.hovering-OLD .wi-placeholder{background:radial-gradient(circle, rgba(255,255,255,0.12) 0%, transparent 70%);}
 
 /* CLICKED — show image, hide placeholder */
 .wi.revealed .wi-placeholder{display:none;}
