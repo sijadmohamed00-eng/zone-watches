@@ -5,434 +5,488 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>زون — ساعات فاخرة</title>
 <link rel="manifest" href="manifest.json"/>
-<meta name="theme-color" content="#0a0a0a" id="theme-meta"/>
-<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="theme-color" content="#f0eeeb" id="theme-meta"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-title" content="زون"/>
 <link rel="apple-touch-icon" href="icons/icon-192.png"/>
 <link rel="icon" type="image/png" href="favicon.png"/>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600&display=swap" rel="stylesheet">
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
 :root{
-  --bg:#f0eeeb;--surface:#fff;--text:#111;--text2:#777;
-  --border:#ddd;--shadow:rgba(0,0,0,0.12);--dark:#0a0a0a;
-  --tr:0.35s cubic-bezier(.23,1,.32,1);
+  --bg:#f0eeeb;--surface:#fff;--text:#111;--text2:#888;
+  --border:rgba(0,0,0,0.1);--dark:#0a0a0a;--tr:.3s ease;
 }
 [data-theme="dark"]{
-  --bg:#0e0e0e;--surface:#1a1a1a;--text:#f0eeeb;--text2:#888;
-  --border:#2a2a2a;--shadow:rgba(0,0,0,0.6);--dark:#f0eeeb;
+  --bg:#0d0d0d;--surface:#181818;--text:#ede9e3;--text2:#666;
+  --border:rgba(255,255,255,0.08);--dark:#ede9e3;
 }
-html,body{width:100%;height:100%;background:var(--bg);color:var(--text);font-family:'Inter',sans-serif;overflow:hidden;user-select:none;transition:background var(--tr),color var(--tr);}
+html,body{width:100%;height:100%;background:var(--bg);color:var(--text);
+  font-family:'IBM Plex Sans Arabic',sans-serif;overflow:hidden;user-select:none;
+  transition:background var(--tr),color var(--tr);}
 
-/* HEADER */
-header{position:fixed;top:0;left:0;right:0;z-index:200;padding:12px 32px;display:flex;align-items:center;justify-content:space-between;background:rgba(240,238,235,0.9);backdrop-filter:blur(16px);border-bottom:1px solid var(--border);transition:background var(--tr),border-color var(--tr);}
-[data-theme="dark"] header{background:rgba(14,14,14,0.9);}
-.logo-wrap{height:42px;display:flex;align-items:center;cursor:pointer}
-.logo-wrap img{height:42px;width:42px;object-fit:contain;filter:invert(1) brightness(0.12);transition:filter var(--tr);}
-[data-theme="dark"] .logo-wrap img{filter:invert(1) brightness(0.85);}
-.header-mid{position:absolute;left:50%;transform:translateX(-50%);font-size:9px;letter-spacing:.3em;text-transform:uppercase;color:var(--text2);font-family:'Space Mono',monospace;}
-.header-right{display:flex;align-items:center;gap:14px;}
-.nav-link{font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--text2);cursor:pointer;transition:color .2s;background:none;border:none;font-family:'Inter',sans-serif;padding:4px;}
-.nav-link:hover{color:var(--text)}
-.theme-btn{width:36px;height:20px;background:var(--border);border-radius:10px;border:none;position:relative;cursor:pointer;transition:background .3s;flex-shrink:0;}
-.theme-btn::after{content:'';position:absolute;top:3px;left:3px;width:14px;height:14px;background:var(--text2);border-radius:50%;transition:transform .3s,background .3s;}
-[data-theme="dark"] .theme-btn::after{transform:translateX(16px);background:var(--text);}
-.cart-pill{display:flex;align-items:center;gap:6px;border:1px solid var(--border);border-radius:40px;padding:6px 12px;cursor:pointer;font-size:10px;letter-spacing:.12em;text-transform:uppercase;color:var(--text2);transition:all .2s;}
-.cart-pill:hover{border-color:var(--text);color:var(--text)}
-.cart-pill b{background:var(--dark);color:var(--bg);border-radius:50%;width:16px;height:16px;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;transition:background var(--tr),color var(--tr);}
+/* ═══ HEADER ═══ */
+header{
+  position:fixed;top:0;left:0;right:0;z-index:200;
+  padding:0 36px;height:60px;
+  display:flex;align-items:center;justify-content:space-between;
+  background:rgba(240,238,235,0.92);backdrop-filter:blur(20px);
+  border-bottom:1px solid var(--border);
+  transition:background var(--tr),border-color var(--tr);
+}
+[data-theme="dark"] header{background:rgba(13,13,13,0.92);}
+.logo-wrap{height:40px;display:flex;align-items:center;cursor:pointer;flex-shrink:0;}
+.logo-wrap img{height:40px;width:40px;object-fit:contain;
+  filter:invert(1) brightness(0.1);transition:filter var(--tr);}
+[data-theme="dark"] .logo-wrap img{filter:invert(1) brightness(0.8);}
+.hcenter{position:absolute;left:50%;transform:translateX(-50%);
+  font-family:'Space Mono',monospace;font-size:9px;letter-spacing:.3em;
+  text-transform:uppercase;color:var(--text2);white-space:nowrap;}
+.hright{display:flex;align-items:center;gap:10px;}
+.hbtn{background:none;border:1px solid var(--border);border-radius:30px;
+  padding:6px 14px;font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--text2);cursor:pointer;font-family:inherit;transition:all .2s;white-space:nowrap;}
+.hbtn:hover{border-color:var(--text);color:var(--text);}
+.theme-toggle{width:34px;height:19px;background:var(--border);border-radius:10px;
+  border:none;position:relative;cursor:pointer;flex-shrink:0;transition:background .3s;}
+.theme-toggle::after{content:'';position:absolute;top:2.5px;left:2.5px;
+  width:14px;height:14px;background:var(--text2);border-radius:50%;
+  transition:transform .3s,background .3s;}
+[data-theme="dark"] .theme-toggle::after{transform:translateX(15px);background:var(--text);}
+.cart-btn{display:flex;align-items:center;gap:7px;background:none;
+  border:1px solid var(--border);border-radius:30px;padding:6px 14px;
+  font-size:10px;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--text2);cursor:pointer;font-family:inherit;transition:all .2s;}
+.cart-btn:hover{border-color:var(--text);color:var(--text);}
+.cart-badge{background:var(--dark);color:var(--bg);border-radius:50%;
+  width:16px;height:16px;display:flex;align-items:center;justify-content:center;
+  font-size:9px;font-weight:700;transition:background var(--tr),color var(--tr);}
 
-/* SCENE */
+/* ═══ SCENE ═══ */
 #deco{position:fixed;inset:0;pointer-events:none;z-index:1;}
-[data-theme="dark"] #deco{opacity:0.2;}
-#scene-wrap{position:fixed;inset:0;overflow:hidden;top:66px;}
-#scene{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);transform-style:preserve-3d;}
+[data-theme="dark"] #deco{opacity:.15;}
+#scene-wrap{position:fixed;inset:0;top:60px;overflow:hidden;}
+#scene{position:absolute;left:50%;top:50%;
+  transform:translate(-50%,-50%);transform-style:preserve-3d;}
 
-/* WATCH ITEMS — image hidden by default */
-.wi{position:absolute;transform-style:preserve-3d;transition:opacity 0.35s ease;cursor:pointer;}
-.wi-placeholder{
-  width:100%;height:100%;
-  display:flex;align-items:center;justify-content:center;
-  border-radius:50%;
-  background:radial-gradient(circle, rgba(180,170,160,0.25) 0%, transparent 70%);
-  transition:transform 0.5s cubic-bezier(.23,1,.32,1), background .3s;
-  animation:wfloat var(--dur,3.5s) ease-in-out infinite;
-  animation-delay:var(--delay,0s);
-  position:relative;
-}
-[data-theme="dark"] .wi-placeholder{background:radial-gradient(circle, rgba(255,255,255,0.06) 0%, transparent 70%);}
-/* subtle ring */
-.wi-placeholder::before{
-  content:'';position:absolute;inset:10px;
-  border-radius:50%;border:1px solid rgba(180,160,130,0.2);
-  animation:ringPulse 3s ease-in-out infinite;
-  animation-delay:var(--delay,0s);
-}
-@keyframes ringPulse{0%,100%{opacity:.3;transform:scale(0.95)}50%{opacity:.8;transform:scale(1.05)}}
-.wi-placeholder{display:none !important;}
-.wi-placeholder-DISABLED::after{
-  content:'⌚';font-size:28px;opacity:0.18;
-  filter:grayscale(1);
-  transition:opacity .3s;
-}
+/* ═══ WATCH ITEMS ═══ */
+.wi{position:absolute;cursor:pointer;
+  transition:opacity .3s ease;}
 .wi img{
-  display:block;
-  object-fit:contain;pointer-events:none;
-  width:100%;height:100%;
-  position:absolute;inset:0;
-  filter:drop-shadow(0 10px 28px rgba(0,0,0,0.15));
+  display:block;width:100%;height:100%;object-fit:contain;
+  pointer-events:none;
+  filter:drop-shadow(0 8px 24px rgba(0,0,0,0.14));
   animation:wfloat var(--dur,3.5s) ease-in-out infinite;
   animation-delay:var(--delay,0s);
-  transition:transform 0.4s cubic-bezier(.23,1,.32,1), filter 0.3s;
+  transition:transform .4s cubic-bezier(.23,1,.32,1),filter .3s;
 }
-[data-theme="dark"] .wi img{filter:drop-shadow(0 10px 32px rgba(0,0,0,0.7));}
-
+[data-theme="dark"] .wi img{filter:drop-shadow(0 8px 28px rgba(0,0,0,0.7));}
 @keyframes wfloat{
-  0%,100%{transform:translateY(0) rotate(var(--rot,0deg))}
-  50%{transform:translateY(var(--bob,-12px)) rotate(var(--rot,0deg))}
+  0%,100%{transform:translateY(0px) rotate(var(--rot,0deg))}
+  50%{transform:translateY(var(--bob,-14px)) rotate(var(--rot,0deg))}
 }
-
-/* HOVER effect on placeholder */
-.wi.hovering img{transform:translateY(-8px) scale(1.1) !important;animation-play-state:paused;}
-.wi.hovering-OLD .wi-placeholder{
-  background:radial-gradient(circle, rgba(180,150,100,0.35) 0%, transparent 70%);
-  transform:translateY(-8px) scale(1.12) rotate(var(--rot,0deg)) !important;
+.wi:hover img{
+  filter:drop-shadow(0 20px 50px rgba(0,0,0,0.22)) !important;
+  transform:translateY(-10px) scale(1.1) rotate(var(--rot,0deg)) !important;
   animation-play-state:paused;
 }
-.wi.hovering img{transform:translateY(-8px) scale(1.1) !important;animation-play-state:paused;}
-.wi.hovering-OLD .wi-placeholder{display:none !important;}
-.wi-placeholder-DISABLED::after{opacity:0.45;}
-[data-theme="dark"] .wi.hovering img{transform:translateY(-8px) scale(1.1) !important;animation-play-state:paused;}
-.wi.hovering-OLD .wi-placeholder{background:radial-gradient(circle, rgba(255,255,255,0.12) 0%, transparent 70%);}
+[data-theme="dark"] .wi:hover img{
+  filter:drop-shadow(0 20px 50px rgba(0,0,0,0.85)) drop-shadow(0 0 20px rgba(255,255,255,0.05)) !important;
+}
+.wi.faded{opacity:.06 !important;pointer-events:none;}
 
-/* CLICKED — show image, hide placeholder */
-.wi.revealed .wi-placeholder{display:none;}
-.wi.revealed img{display:block;}
-.wi.revealed{z-index:150 !important;}
-
-.wi.faded{opacity:0.06 !important}
-.wi.zoomed .wi-placeholder{display:none;}
-.wi.zoomed img{display:block;transform:scale(1) !important;animation-play-state:paused;}
-
-/* ── PRODUCT MODAL (after click) ── */
-#product-modal{
-  position:fixed;inset:0;z-index:400;
-  display:flex;align-items:center;justify-content:center;
+/* ═══ ZOOM OVERLAY — مثل الفيديو ═══ */
+#zoom-overlay{
+  position:fixed;inset:0;z-index:300;
   pointer-events:none;opacity:0;
   transition:opacity .35s;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;
+  gap:18px;
 }
-#product-modal.show{opacity:1;pointer-events:all;}
-#product-modal .overlay{position:absolute;inset:0;background:rgba(0,0,0,0.55);backdrop-filter:blur(6px);}
-#product-modal .modal-box{
-  position:relative;z-index:1;
-  background:var(--surface);
-  width:min(460px,92vw);
-  border:1px solid var(--border);
-  border-radius:6px;
-  padding:32px;
-  text-align:center;
-  transform:translateY(20px);
-  transition:transform .35s cubic-bezier(.23,1,.32,1),background var(--tr),border-color var(--tr);
-  box-shadow:0 24px 80px var(--shadow);
-  direction:rtl;
+#zoom-overlay.show{opacity:1;pointer-events:all;}
+#zoom-overlay .zo-bg{position:absolute;inset:0;background:rgba(240,238,235,0.55);backdrop-filter:blur(2px);}
+[data-theme="dark"] #zoom-overlay .zo-bg{background:rgba(13,13,13,0.55);}
+#zoom-overlay .zo-close{
+  position:absolute;top:70px;left:50%;transform:translateX(-50%);
+  width:28px;height:28px;border:1px solid var(--border);background:var(--surface);
+  border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;
+  font-size:11px;color:var(--text2);z-index:1;transition:all .2s;
 }
-#product-modal.show .modal-box{transform:translateY(0);}
-#product-modal .modal-img{width:200px;height:200px;object-fit:contain;margin:0 auto 20px;display:block;filter:drop-shadow(0 12px 32px rgba(0,0,0,0.15));}
-[data-theme="dark"] #product-modal .modal-img{filter:drop-shadow(0 12px 32px rgba(0,0,0,0.6));}
-#product-modal .modal-close{position:absolute;top:12px;left:12px;width:28px;height:28px;border:1px solid var(--border);background:none;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--text2);transition:all .2s;}
-#product-modal .modal-close:hover{background:var(--dark);color:var(--bg);border-color:var(--dark);}
-#product-modal .modal-cat{font-size:9px;letter-spacing:.22em;text-transform:uppercase;color:var(--text2);margin-bottom:6px;}
-#product-modal .modal-name{font-size:20px;font-weight:600;color:var(--text);margin-bottom:10px;line-height:1.3;}
-#product-modal .modal-price{font-family:'Space Mono',monospace;font-size:26px;font-weight:700;color:var(--text);margin-bottom:24px;}
-#product-modal .modal-btns{display:flex;gap:10px;}
-#product-modal .modal-btn{
-  flex:1;padding:13px;border:none;border-radius:3px;
-  font-size:11px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;
-  cursor:pointer;font-family:'Inter',sans-serif;transition:opacity .2s;
+#zoom-overlay .zo-close:hover{background:var(--dark);color:var(--bg);}
+#zoom-img-wrap{position:relative;z-index:1;text-align:center;}
+#zoom-img{
+  width:min(260px,55vw);height:min(260px,55vw);object-fit:contain;
+  filter:drop-shadow(0 24px 60px rgba(0,0,0,0.25));
+  animation:zoomIn .4s cubic-bezier(.23,1,.32,1);
 }
-#product-modal .btn-book{background:var(--dark);color:var(--bg);}
-#product-modal .btn-book:hover{opacity:.8}
-#product-modal .btn-cart{background:none;border:1px solid var(--border);color:var(--text2);}
-#product-modal .btn-cart:hover{border-color:var(--text);color:var(--text);}
+@keyframes zoomIn{from{transform:scale(0.7);opacity:0}to{transform:scale(1);opacity:1}}
+[data-theme="dark"] #zoom-img{filter:drop-shadow(0 24px 60px rgba(0,0,0,0.8));}
+#zoom-info{position:relative;z-index:1;text-align:center;}
+#zoom-name{font-size:clamp(16px,3vw,22px);font-weight:600;color:var(--text);margin-bottom:6px;}
+#zoom-price{font-family:'Space Mono',monospace;font-size:clamp(20px,4vw,28px);
+  font-weight:700;color:var(--text);margin-bottom:22px;}
+#zoom-btns{display:flex;gap:10px;justify-content:center;}
+.zo-btn{padding:12px 28px;border:none;border-radius:3px;
+  font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;
+  cursor:pointer;font-family:inherit;transition:opacity .2s;}
+.zo-btn-book{background:var(--dark);color:var(--bg);}
+.zo-btn-cart{background:none;border:1px solid var(--border);color:var(--text2);}
+.zo-btn-book:hover,.zo-btn-cart:hover{opacity:.8;}
 
-/* FILTER BAR */
-#filter-bar{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:200;display:flex;align-items:center;background:var(--surface);border:1px solid var(--border);border-radius:50px;padding:5px;gap:2px;box-shadow:0 4px 32px var(--shadow);animation:barIn .7s .3s cubic-bezier(.23,1,.32,1) both;transition:background var(--tr),border-color var(--tr);}
-@keyframes barIn{from{opacity:0;transform:translateX(-50%) translateY(18px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
-.add-btn{width:30px;height:30px;border-radius:50%;background:var(--dark);color:var(--bg);border:none;font-size:17px;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0;margin-left:2px;transition:background var(--tr),color var(--tr),opacity .2s;}
-.add-btn:hover{opacity:.8}
-.sep{width:1px;height:13px;background:var(--border);margin:0 1px;flex-shrink:0}
-.fbtn{background:none;border:none;padding:6px 12px;border-radius:28px;font-size:10px;font-weight:500;letter-spacing:.04em;color:var(--text2);cursor:pointer;transition:all .2s;white-space:nowrap;font-family:'Inter',sans-serif;}
-.fbtn:hover{color:var(--text)}
-.fbtn.active{background:var(--dark);color:var(--bg)}
-
-/* BOTTOM */
-#count-badge{position:fixed;bottom:24px;right:32px;z-index:200;font-family:'Space Mono',monospace;font-size:9px;color:var(--text2);letter-spacing:.1em;text-transform:uppercase;animation:barIn .7s .5s both;}
-#scroll-hint{position:fixed;bottom:24px;left:32px;z-index:200;display:flex;align-items:center;gap:7px;animation:barIn .7s .6s both;}
-#scroll-hint span{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--text2)}
-.scroll-arr{width:12px;height:12px;border-right:1px solid var(--text2);border-bottom:1px solid var(--text2);transform:rotate(45deg);animation:ap 1.6s ease-in-out infinite;}
-@keyframes ap{0%,100%{opacity:.3;transform:rotate(45deg) translate(0,0)}50%{opacity:1;transform:rotate(45deg) translate(2px,2px)}}
-
-/* TOAST */
-#toast{position:fixed;top:74px;left:50%;transform:translateX(-50%) translateY(-8px);z-index:500;background:var(--dark);color:var(--bg);padding:10px 20px;border-radius:40px;font-size:11px;letter-spacing:.06em;opacity:0;pointer-events:none;transition:opacity .3s,transform .3s;white-space:nowrap;}
-#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
-
-/* ═══ PANELS ═══ */
-.panel{position:fixed;inset:0;z-index:350;opacity:0;pointer-events:none;transition:opacity .35s;display:flex;align-items:center;justify-content:center;}
-.panel.show{opacity:1;pointer-events:all;}
-.panel-overlay{position:absolute;inset:0;background:rgba(0,0,0,0.6);backdrop-filter:blur(8px);}
-.panel-box{
-  position:relative;z-index:1;
+/* ═══ FILTER BAR ═══ */
+#filter-bar{
+  position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:200;
+  display:flex;align-items:center;
   background:var(--surface);border:1px solid var(--border);
-  border-radius:8px;width:min(500px,94vw);
-  max-height:88vh;overflow-y:auto;
-  padding:32px;direction:rtl;
-  box-shadow:0 24px 80px var(--shadow);
-  transform:translateY(20px);transition:transform .35s cubic-bezier(.23,1,.32,1),background var(--tr);
-  scrollbar-width:thin;
+  border-radius:50px;padding:5px;gap:2px;
+  box-shadow:0 4px 24px rgba(0,0,0,0.1);
+  animation:slideUp .6s .3s both;
+  overflow-x:auto;max-width:96vw;
+  scrollbar-width:none;
+  transition:background var(--tr),border-color var(--tr);
 }
-.panel.show .panel-box{transform:translateY(0);}
-.panel-close{position:absolute;top:14px;left:14px;width:28px;height:28px;border:1px solid var(--border);background:none;border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:12px;color:var(--text2);transition:all .2s;}
-.panel-close:hover{background:var(--dark);color:var(--bg);border-color:var(--dark);}
-.panel-title{font-family:'Space Mono',monospace;font-size:16px;font-weight:700;letter-spacing:.05em;color:var(--text);margin-bottom:24px;padding-bottom:12px;border-bottom:1px solid var(--border);}
+#filter-bar::-webkit-scrollbar{display:none;}
+@keyframes slideUp{from{opacity:0;transform:translateX(-50%) translateY(16px)}to{opacity:1;transform:translateX(-50%) translateY(0)}}
+.fadd{width:30px;height:30px;border-radius:50%;background:var(--dark);color:var(--bg);
+  border:none;font-size:18px;display:flex;align-items:center;justify-content:center;
+  cursor:pointer;flex-shrink:0;margin-left:2px;transition:background var(--tr),color var(--tr),opacity .2s;}
+.fadd:hover{opacity:.8;}
+.fsep{width:1px;height:13px;background:var(--border);flex-shrink:0;}
+.fbtn{background:none;border:none;padding:6px 13px;border-radius:28px;
+  font-size:10px;font-weight:500;color:var(--text2);cursor:pointer;
+  transition:all .2s;white-space:nowrap;font-family:inherit;}
+.fbtn:hover{color:var(--text);}
+.fbtn.act{background:var(--dark);color:var(--bg);}
 
-/* CART PANEL */
-.cart-item{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid var(--border);}
-.cart-item img{width:60px;height:60px;object-fit:contain;flex-shrink:0;filter:drop-shadow(0 4px 12px rgba(0,0,0,0.12));}
-.cart-item .ci-info{flex:1}
-.cart-item .ci-name{font-size:13px;font-weight:500;color:var(--text);margin-bottom:3px;}
-.cart-item .ci-price{font-family:'Space Mono',monospace;font-size:13px;color:var(--text2);}
-.cart-item .ci-rm{background:none;border:1px solid var(--border);border-radius:50%;width:22px;height:22px;cursor:pointer;font-size:10px;color:var(--text2);display:flex;align-items:center;justify-content:center;transition:all .2s;}
-.cart-item .ci-rm:hover{background:#e00;color:#fff;border-color:#e00;}
-.cart-empty{text-align:center;padding:40px 0;color:var(--text2);font-size:14px;}
-.cart-total{display:flex;justify-content:space-between;align-items:center;padding:16px 0;font-family:'Space Mono',monospace;font-size:15px;font-weight:700;color:var(--text);}
-.checkout-btn{width:100%;padding:14px;background:var(--dark);color:var(--bg);border:none;border-radius:4px;font-size:11px;font-weight:600;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;font-family:'Inter',sans-serif;transition:opacity .2s;margin-top:8px;}
-.checkout-btn:hover{opacity:.8}
+#count-badge{position:fixed;bottom:24px;right:28px;z-index:200;
+  font-family:'Space Mono',monospace;font-size:9px;color:var(--text2);
+  letter-spacing:.1em;text-transform:uppercase;animation:slideUp .6s .5s both;}
+#scroll-hint{position:fixed;bottom:24px;left:28px;z-index:200;
+  display:flex;align-items:center;gap:7px;animation:slideUp .6s .6s both;}
+#scroll-hint span{font-size:9px;letter-spacing:.14em;text-transform:uppercase;color:var(--text2);}
+.sarr{width:12px;height:12px;border-right:1px solid var(--text2);border-bottom:1px solid var(--text2);
+  transform:rotate(45deg);animation:arrPulse 1.5s ease-in-out infinite;}
+@keyframes arrPulse{0%,100%{opacity:.3;transform:rotate(45deg) translate(0,0)}50%{opacity:1;transform:rotate(45deg) translate(2px,2px)}}
 
-/* BOOK FORM */
-.form-group{margin-bottom:16px;}
-.form-group label{display:block;font-size:10px;letter-spacing:.15em;text-transform:uppercase;color:var(--text2);margin-bottom:6px;}
-.form-group input,.form-group textarea{width:100%;padding:11px 14px;background:var(--bg);border:1px solid var(--border);border-radius:3px;font-size:13px;color:var(--text);font-family:'Inter',sans-serif;transition:border-color .2s,background var(--tr),color var(--tr);}
-.form-group input:focus,.form-group textarea:focus{outline:none;border-color:var(--text);}
-.form-group textarea{resize:none;height:70px;}
-.book-btn{width:100%;padding:14px;background:#25d366;color:#fff;border:none;border-radius:4px;font-size:12px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;font-family:'Inter',sans-serif;display:flex;align-items:center;justify-content:center;gap:10px;margin-top:8px;transition:opacity .2s;}
-.book-btn:hover{opacity:.9}
-.wa-icon{font-size:18px;}
+/* ═══ TOAST ═══ */
+#toast{position:fixed;top:70px;left:50%;transform:translateX(-50%) translateY(-8px);
+  z-index:600;background:var(--dark);color:var(--bg);padding:10px 20px;
+  border-radius:40px;font-size:11px;opacity:0;pointer-events:none;
+  transition:opacity .3s,transform .3s;white-space:nowrap;}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
 
-/* ABOUT PANEL */
-.about-section{margin-bottom:20px;}
-.about-section h3{font-size:11px;letter-spacing:.2em;text-transform:uppercase;color:var(--text2);margin-bottom:8px;}
-.about-section p{font-size:14px;line-height:1.7;color:var(--text);}
-.social-links{display:flex;gap:12px;flex-wrap:wrap;margin-top:8px;}
-.social-link{display:flex;align-items:center;gap:7px;padding:8px 14px;border:1px solid var(--border);border-radius:30px;font-size:11px;color:var(--text2);text-decoration:none;transition:all .2s;}
-.social-link:hover{border-color:var(--text);color:var(--text);}
+/* ═══ PANELS (Cart / Book / About / Admin) ═══ */
+.panel{position:fixed;inset:0;z-index:400;opacity:0;pointer-events:none;
+  transition:opacity .3s;display:flex;align-items:center;justify-content:center;}
+.panel.show{opacity:1;pointer-events:all;}
+.p-ov{position:absolute;inset:0;background:rgba(0,0,0,0.5);backdrop-filter:blur(8px);}
+.p-box{position:relative;z-index:1;background:var(--surface);border:1px solid var(--border);
+  border-radius:8px;width:min(480px,95vw);max-height:86vh;overflow-y:auto;
+  padding:28px;direction:rtl;
+  box-shadow:0 24px 80px rgba(0,0,0,0.2);
+  transform:translateY(16px);transition:transform .3s ease,background var(--tr);
+  scrollbar-width:thin;}
+.panel.show .p-box{transform:translateY(0);}
+.p-close{position:absolute;top:12px;left:12px;width:26px;height:26px;
+  border:1px solid var(--border);background:none;border-radius:50%;
+  cursor:pointer;display:flex;align-items:center;justify-content:center;
+  font-size:11px;color:var(--text2);transition:all .2s;}
+.p-close:hover{background:var(--dark);color:var(--bg);border-color:var(--dark);}
+.p-title{font-family:'Space Mono',monospace;font-size:14px;font-weight:700;
+  color:var(--text);margin-bottom:20px;padding-bottom:12px;border-bottom:1px solid var(--border);}
 
-/* ADMIN PANEL */
-.admin-login{text-align:center;padding:16px 0;}
-.admin-login input{width:100%;padding:11px 14px;background:var(--bg);border:1px solid var(--border);border-radius:3px;font-size:13px;color:var(--text);font-family:'Inter',sans-serif;margin-bottom:12px;}
-.admin-login input:focus{outline:none;border-color:var(--text);}
-.admin-tabs{display:flex;gap:4px;margin-bottom:20px;border-bottom:1px solid var(--border);padding-bottom:0;}
-.atab{background:none;border:none;padding:10px 16px;font-size:11px;font-weight:500;letter-spacing:.08em;color:var(--text2);cursor:pointer;border-bottom:2px solid transparent;transition:all .2s;font-family:'Inter',sans-serif;}
-.atab.active{color:var(--text);border-bottom-color:var(--text);}
-.watch-edit-item{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);}
-.watch-edit-item img{width:50px;height:50px;object-fit:contain;}
-.wei-info{flex:1}
-.wei-name{font-size:12px;font-weight:600;color:var(--text);}
-.wei-price{font-size:11px;color:var(--text2);}
-.wei-btns{display:flex;gap:6px;}
-.wei-btn{padding:5px 10px;border:1px solid var(--border);background:none;border-radius:3px;font-size:9px;cursor:pointer;color:var(--text2);transition:all .2s;letter-spacing:.08em;text-transform:uppercase;}
+/* cart */
+.ci{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);}
+.ci img{width:55px;height:55px;object-fit:contain;flex-shrink:0;
+  filter:drop-shadow(0 3px 10px rgba(0,0,0,0.1));}
+.ci-info{flex:1;}
+.ci-name{font-size:12px;font-weight:500;color:var(--text);margin-bottom:2px;}
+.ci-price{font-family:'Space Mono',monospace;font-size:11px;color:var(--text2);}
+.ci-rm{background:none;border:1px solid var(--border);border-radius:50%;
+  width:20px;height:20px;cursor:pointer;font-size:9px;color:var(--text2);
+  display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.ci-rm:hover{background:#d00;color:#fff;border-color:#d00;}
+.cart-empty{text-align:center;padding:36px 0;color:var(--text2);font-size:13px;}
+.cart-total{display:flex;justify-content:space-between;align-items:center;
+  padding:14px 0;font-family:'Space Mono',monospace;font-size:14px;
+  font-weight:700;color:var(--text);border-top:1px solid var(--border);margin-top:4px;}
+.p-btn{width:100%;padding:13px;background:var(--dark);color:var(--bg);
+  border:none;border-radius:3px;font-size:10px;font-weight:700;
+  letter-spacing:.16em;text-transform:uppercase;cursor:pointer;
+  font-family:inherit;transition:opacity .2s;margin-top:8px;}
+.p-btn:hover{opacity:.8;}
+.p-btn-out{background:none;border:1px solid var(--border);color:var(--text2);margin-top:6px;}
+.p-btn-out:hover{border-color:var(--text);color:var(--text);}
+
+/* book form */
+.fg{margin-bottom:14px;}
+.fg label{display:block;font-size:9px;letter-spacing:.18em;text-transform:uppercase;
+  color:var(--text2);margin-bottom:5px;}
+.fg input,.fg textarea,.fg select{width:100%;padding:10px 13px;
+  background:var(--bg);border:1px solid var(--border);border-radius:3px;
+  font-size:13px;color:var(--text);font-family:inherit;
+  transition:border-color .2s,background var(--tr),color var(--tr);}
+.fg input:focus,.fg textarea:focus{outline:none;border-color:var(--text);}
+.fg textarea{resize:none;height:65px;}
+.wa-btn{width:100%;padding:13px;background:#25d366;color:#fff;border:none;
+  border-radius:3px;font-size:11px;font-weight:700;letter-spacing:.1em;
+  text-transform:uppercase;cursor:pointer;font-family:inherit;
+  display:flex;align-items:center;justify-content:center;gap:9px;
+  margin-top:10px;transition:opacity .2s;}
+.wa-btn:hover{opacity:.9;}
+.order-summary{background:var(--bg);border:1px solid var(--border);border-radius:4px;
+  padding:12px;margin-bottom:16px;font-size:12px;color:var(--text2);line-height:1.6;}
+
+/* about */
+.a-sec{margin-bottom:18px;}
+.a-sec h3{font-size:9px;letter-spacing:.2em;text-transform:uppercase;
+  color:var(--text2);margin-bottom:7px;}
+.a-sec p{font-size:13px;line-height:1.7;color:var(--text);}
+.social-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:6px;}
+.soc-link{display:flex;align-items:center;gap:6px;padding:7px 13px;
+  border:1px solid var(--border);border-radius:30px;font-size:11px;
+  color:var(--text2);text-decoration:none;transition:all .2s;}
+.soc-link:hover{border-color:var(--text);color:var(--text);}
+
+/* admin */
+.admin-tabs{display:flex;gap:0;margin-bottom:18px;border-bottom:1px solid var(--border);}
+.atab{background:none;border:none;border-bottom:2px solid transparent;
+  padding:9px 14px;font-size:10px;font-weight:500;letter-spacing:.08em;
+  color:var(--text2);cursor:pointer;transition:all .2s;font-family:inherit;}
+.atab.act{color:var(--text);border-bottom-color:var(--text);}
+.wei{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);}
+.wei img{width:46px;height:46px;object-fit:contain;flex-shrink:0;}
+.wei-info{flex:1;}
+.wei-name{font-size:11px;font-weight:600;color:var(--text);}
+.wei-sub{font-size:10px;color:var(--text2);}
+.wei-btns{display:flex;gap:5px;}
+.wei-btn{padding:4px 9px;border:1px solid var(--border);background:none;
+  border-radius:3px;font-size:8px;cursor:pointer;color:var(--text2);
+  transition:all .2s;letter-spacing:.06em;text-transform:uppercase;font-family:inherit;}
 .wei-btn:hover{border-color:var(--text);color:var(--text);}
-.wei-btn.del:hover{border-color:#e00;color:#e00;}
-.admin-form-row{display:flex;gap:10px;}
-.admin-form-row .form-group{flex:1;}
+.wei-btn.del:hover{border-color:#d00;color:#d00;}
+.upload-box{border:1px dashed var(--border);border-radius:6px;padding:20px;
+  text-align:center;cursor:pointer;transition:all .2s;margin-bottom:12px;
+  min-height:80px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;}
+.upload-box:hover{border-color:var(--text);background:var(--bg);}
+.upload-box p{font-size:11px;color:var(--text2);}
+.upload-box p.sub{font-size:9px;opacity:.6;}
+.spin{width:28px;height:28px;border:2px solid var(--border);border-top-color:var(--text);
+  border-radius:50%;animation:spinA .7s linear infinite;}
+@keyframes spinA{to{transform:rotate(360deg)}}
+.adm-row{display:flex;gap:10px;}
+.adm-row .fg{flex:1;}
+.adm-save{width:100%;padding:11px;background:var(--dark);color:var(--bg);
+  border:none;border-radius:3px;font-size:9px;font-weight:700;
+  letter-spacing:.16em;text-transform:uppercase;cursor:pointer;
+  font-family:inherit;transition:opacity .2s;margin-top:4px;}
+.adm-save:hover{opacity:.8;}
+.login-box{padding:16px 0;}
+.login-box input{width:100%;padding:10px 13px;background:var(--bg);
+  border:1px solid var(--border);border-radius:3px;font-size:13px;
+  color:var(--text);font-family:inherit;margin-bottom:10px;}
+.login-box input:focus{outline:none;border-color:var(--text);}
+.err-msg{color:#d00;font-size:11px;text-align:center;margin-top:8px;display:none;}
 
-.upload-area p{font-size:12px;color:var(--text2);}
-.save-btn{width:100%;padding:12px;background:var(--dark);color:var(--bg);border:none;border-radius:3px;font-size:10px;font-weight:700;letter-spacing:.18em;text-transform:uppercase;cursor:pointer;font-family:'Inter',sans-serif;transition:opacity .2s;}
-.save-btn:hover{opacity:.8}
-.ai-spinner{width:32px;height:32px;border:2px solid var(--border);border-top-color:var(--text);border-radius:50%;animation:spin .8s linear infinite;margin:0 auto;}
-@keyframes spin{to{transform:rotate(360deg)}}
-.upload-area{border:1px dashed var(--border);border-radius:6px;padding:24px 16px;text-align:center;cursor:pointer;transition:border-color .2s,background .2s;margin-bottom:14px;min-height:90px;display:flex;align-items:center;justify-content:center;}
-.upload-area:hover{border-color:var(--text);background:var(--bg);}
+/* PWA */
+#pwa-banner{position:fixed;bottom:76px;left:50%;transform:translateX(-50%) translateY(10px);
+  z-index:300;background:var(--dark);color:var(--bg);border-radius:16px;
+  padding:12px 16px;display:flex;align-items:center;gap:12px;
+  box-shadow:0 8px 40px rgba(0,0,0,0.2);opacity:0;pointer-events:none;
+  transition:opacity .4s,transform .4s;white-space:nowrap;}
+#pwa-banner.show{opacity:1;pointer-events:all;transform:translateX(-50%) translateY(0);}
+#pwa-banner img{width:28px;height:28px;border-radius:6px;background:#222;padding:2px;}
+.pwa-text strong{font-size:11px;font-weight:600;display:block;}
+.pwa-text span{font-size:9px;opacity:.6;}
+.pwa-btns{display:flex;gap:6px;}
+.pwa-install{background:var(--bg);color:var(--dark);border:none;border-radius:8px;
+  padding:6px 12px;font-size:9px;font-weight:700;cursor:pointer;transition:opacity .2s;}
+.pwa-install:hover{opacity:.8;}
+.pwa-x{background:none;border:none;color:var(--bg);font-size:15px;cursor:pointer;opacity:.5;padding:0 3px;}
+.pwa-x:hover{opacity:1;}
 
-/* PWA BANNER */
-#install-banner{position:fixed;bottom:80px;left:50%;transform:translateX(-50%) translateY(12px);z-index:300;background:var(--dark);color:var(--bg);border-radius:18px;padding:13px 16px;display:flex;align-items:center;gap:12px;box-shadow:0 10px 44px var(--shadow);opacity:0;pointer-events:none;transition:opacity .4s,transform .4s;white-space:nowrap;}
-#install-banner.show{opacity:1;pointer-events:all;transform:translateX(-50%) translateY(0)}
-#install-banner img{width:30px;height:30px;border-radius:7px;object-fit:contain;background:#222;padding:2px;}
-.ib-text strong{font-size:11px;font-weight:600;display:block}
-.ib-text span{font-size:9px;opacity:.6}
-.ib-btns{display:flex;gap:7px;margin-right:4px;}
-.ib-install{background:var(--bg);color:var(--dark);border:none;border-radius:8px;padding:6px 13px;font-size:10px;font-weight:600;cursor:pointer;transition:opacity .2s;}
-.ib-install:hover{opacity:.8}
-.ib-close{background:none;border:none;color:var(--bg);font-size:16px;cursor:pointer;opacity:.5;padding:0 4px;}
-.ib-close:hover{opacity:1}
-
-/* MOBILE */
-@media(max-width:600px){
-  header{padding:10px 16px;}
-  .header-mid{display:none;}
-  .nav-link:not(.always){display:none;}
-  #scene-wrap{top:60px;}
-  .panel-box{padding:22px 18px;}
-  #filter-bar .fbtn{padding:5px 9px;font-size:9px;}
+@media(max-width:640px){
+  .hcenter{display:none;}
+  header{padding:0 14px;}
+  .hbtn{padding:5px 10px;font-size:9px;}
+  #scene-wrap{top:56px;}
 }
 </style>
 </head>
 <body>
 
 <svg id="deco" viewBox="0 0 1400 900" preserveAspectRatio="xMidYMid slice" xmlns="http://www.w3.org/2000/svg">
-  <ellipse cx="200" cy="450" rx="155" ry="205" fill="none" stroke="#ccc" stroke-width="0.7" opacity="0.5"/>
-  <ellipse cx="1200" cy="450" rx="155" ry="205" fill="none" stroke="#ccc" stroke-width="0.7" opacity="0.5"/>
-  <ellipse cx="700" cy="450" rx="570" ry="315" fill="none" stroke="#ddd" stroke-width="0.5" opacity="0.4"/>
-  <path d="M0,200 Q700,60 1400,200" fill="none" stroke="#ccc" stroke-width="0.6" opacity="0.4"/>
-  <path d="M0,700 Q700,840 1400,700" fill="none" stroke="#ccc" stroke-width="0.6" opacity="0.4"/>
+  <ellipse cx="200" cy="450" rx="160" ry="210" fill="none" stroke="#bbb" stroke-width="0.8" opacity="0.5"/>
+  <ellipse cx="1200" cy="450" rx="160" ry="210" fill="none" stroke="#bbb" stroke-width="0.8" opacity="0.5"/>
+  <ellipse cx="700" cy="450" rx="560" ry="320" fill="none" stroke="#ccc" stroke-width="0.5" opacity="0.4"/>
+  <path d="M0,200 Q700,70 1400,200" fill="none" stroke="#ccc" stroke-width="0.7" opacity="0.4"/>
+  <path d="M0,700 Q700,830 1400,700" fill="none" stroke="#ccc" stroke-width="0.7" opacity="0.4"/>
 </svg>
 
+<!-- HEADER -->
 <header>
-  <div class="logo-wrap" onclick="closeAllPanels()"><img src="logo.png" alt="زون"/></div>
-  <div class="header-mid">Luxury Timepieces · Since 2024</div>
-  <div class="header-right">
-    <button class="nav-link always" onclick="showPanel('about')">من نحن</button>
-    <button class="nav-link" onclick="showPanel('admin')">⚙</button>
-    <button class="theme-btn" onclick="toggleTheme()" title="تبديل المظهر"></button>
-    <div class="cart-pill" onclick="showPanel('cart')">السلة <b id="cart-n">0</b></div>
+  <div class="logo-wrap"><img src="logo.png" alt="زون"/></div>
+  <div class="hcenter">LUXURY TIMEPIECES · SINCE 2024</div>
+  <div class="hright">
+    <button class="hbtn" onclick="openPanel('about')">من نحن</button>
+    <button class="hbtn" onclick="openPanel('admin')" style="padding:6px 10px;">⚙</button>
+    <button class="theme-toggle" onclick="toggleTheme()"></button>
+    <button class="cart-btn" onclick="openPanel('cart')">
+      السلة <span class="cart-badge" id="cart-n">0</span>
+    </button>
   </div>
 </header>
 
-<!-- ═══ PRODUCT MODAL ═══ -->
-<div id="product-modal">
-  <div class="overlay" onclick="closeModal()"></div>
-  <div class="modal-box">
-    <button class="modal-close" onclick="closeModal()">✕</button>
-    <img id="modal-img" class="modal-img" src="" alt=""/>
-    <div id="modal-cat" class="modal-cat"></div>
-    <div id="modal-name" class="modal-name"></div>
-    <div id="modal-price" class="modal-price"></div>
-    <div class="modal-btns">
-      <button class="modal-btn btn-book" onclick="openBookFromModal()">احجز الآن</button>
-      <button class="modal-btn btn-cart" onclick="addToCartFromModal()">أضف للسلة</button>
+<!-- ZOOM OVERLAY — مثل الفيديو -->
+<div id="zoom-overlay">
+  <div class="zo-bg" onclick="closeZoom()"></div>
+  <button class="zo-close" onclick="closeZoom()">✕</button>
+  <div id="zoom-img-wrap">
+    <img id="zoom-img" src="" alt=""/>
+  </div>
+  <div id="zoom-info">
+    <div id="zoom-name"></div>
+    <div id="zoom-price"></div>
+    <div id="zoom-btns">
+      <button class="zo-btn zo-btn-book" onclick="openBookForZoom()">احجز الآن</button>
+      <button class="zo-btn zo-btn-cart" onclick="addZoomToCart()">أضف للسلة</button>
     </div>
   </div>
 </div>
 
-<!-- ═══ 3D SCENE ═══ -->
+<!-- SCENE -->
 <div id="scene-wrap"><div id="scene"></div></div>
 
-<!-- ═══ CART PANEL ═══ -->
+<!-- FILTER BAR -->
+<div id="filter-bar">
+  <button class="fadd" onclick="openPanel('admin')" title="إضافة ساعة">+</button>
+  <div class="fsep"></div>
+  <button class="fbtn act" data-f="All">الكل</button>
+  <div class="fsep"></div>
+  <button class="fbtn" data-f="Sport">رياضي</button>
+  <div class="fsep"></div>
+  <button class="fbtn" data-f="Classic">كلاسيك</button>
+  <!-- Brand filters — shown dynamically -->
+  <div class="fsep brand-sep" style="display:none"></div>
+  <button class="fbtn brand-btn" data-f="Rolex" style="display:none">رولكس</button>
+  <div class="fsep brand-sep" style="display:none"></div>
+  <button class="fbtn brand-btn" data-f="Patek" style="display:none">باتيك</button>
+  <div class="fsep brand-sep" style="display:none"></div>
+  <button class="fbtn brand-btn" data-f="AP" style="display:none">أوديمار</button>
+  <div class="fsep brand-sep" style="display:none"></div>
+  <button class="fbtn brand-btn" data-f="Omega" style="display:none">أوميغا</button>
+  <div class="fsep brand-sep" style="display:none"></div>
+  <button class="fbtn brand-btn" data-f="Cartier" style="display:none">كارتييه</button>
+  <div class="fsep brand-sep" style="display:none"></div>
+  <button class="fbtn brand-btn" data-f="Richard" style="display:none">ريتشارد</button>
+  <div class="fsep"></div>
+  <button class="fbtn" data-f="Under">تحت 3M</button>
+  <div class="fsep"></div>
+  <button class="fbtn" data-f="Premium">بريميوم</button>
+</div>
+<div id="count-badge">0 ساعة</div>
+<div id="scroll-hint"><span>SCROLL</span><div class="sarr"></div></div>
+<div id="toast"></div>
+
+<!-- CART PANEL -->
 <div class="panel" id="panel-cart">
-  <div class="panel-overlay" onclick="closeAllPanels()"></div>
-  <div class="panel-box">
-    <button class="panel-close" onclick="closeAllPanels()">✕</button>
-    <div class="panel-title">🛒 سلة التسوق</div>
-    <div id="cart-items"></div>
-    <div id="cart-footer" style="display:none">
-      <div class="cart-total"><span>المجموع</span><span id="cart-total-val"></span></div>
-      <button class="checkout-btn" onclick="showPanel('book')">المتابعة للحجز</button>
+  <div class="p-ov" onclick="closeAllPanels()"></div>
+  <div class="p-box">
+    <button class="p-close" onclick="closeAllPanels()">✕</button>
+    <div class="p-title">🛒 سلة التسوق</div>
+    <div id="cart-list"></div>
+    <div id="cart-foot" style="display:none">
+      <div class="cart-total"><span>المجموع</span><span id="cart-total"></span></div>
+      <button class="p-btn" onclick="goToBook()">المتابعة للحجز ←</button>
     </div>
   </div>
 </div>
 
-<!-- ═══ BOOK PANEL ═══ -->
+<!-- BOOK PANEL -->
 <div class="panel" id="panel-book">
-  <div class="panel-overlay" onclick="closeAllPanels()"></div>
-  <div class="panel-box">
-    <button class="panel-close" onclick="closeAllPanels()">✕</button>
-    <div class="panel-title">📋 تأكيد الحجز</div>
-    <p style="font-size:12px;color:var(--text2);margin-bottom:20px;line-height:1.6;">أكمل بياناتك وسنتواصل معك عبر واتساب لتأكيد الطلب</p>
-    <div id="book-watch-summary" style="background:var(--bg);border:1px solid var(--border);border-radius:4px;padding:14px;margin-bottom:18px;font-size:13px;color:var(--text2);"></div>
-    <div class="form-group"><label>الاسم الكامل</label><input type="text" id="book-name" placeholder="محمد عبدالله"/></div>
-    <div class="form-group"><label>رقم الهاتف</label><input type="tel" id="book-phone" placeholder="07XXXXXXXXX"/></div>
-    <div class="form-group"><label>العنوان</label><textarea id="book-addr" placeholder="المحافظة / المنطقة / التفاصيل"></textarea></div>
-    <button class="book-btn" onclick="sendWhatsApp()">
-      <span class="wa-icon">📱</span> إرسال عبر واتساب
+  <div class="p-ov" onclick="closeAllPanels()"></div>
+  <div class="p-box">
+    <button class="p-close" onclick="closeAllPanels()">✕</button>
+    <div class="p-title">📋 تأكيد الحجز</div>
+    <div class="order-summary" id="order-summary"></div>
+    <div class="fg"><label>الاسم الكامل</label><input type="text" id="bk-name" placeholder="محمد علي"/></div>
+    <div class="fg"><label>رقم الهاتف</label><input type="tel" id="bk-phone" placeholder="07XXXXXXXXX"/></div>
+    <div class="fg"><label>العنوان</label><textarea id="bk-addr" placeholder="المحافظة / المنطقة / التفاصيل"></textarea></div>
+    <button class="wa-btn" onclick="sendWA()">
+      <span style="font-size:16px">📱</span> إرسال عبر واتساب
     </button>
-    <p style="font-size:10px;color:var(--text2);text-align:center;margin-top:10px;">رقم الحجز: 07734383437</p>
+    <p style="font-size:10px;color:var(--text2);text-align:center;margin-top:10px;">رقم الحجز: <b>07734383437</b></p>
   </div>
 </div>
 
-<!-- ═══ ABOUT PANEL ═══ -->
+<!-- ABOUT PANEL -->
 <div class="panel" id="panel-about">
-  <div class="panel-overlay" onclick="closeAllPanels()"></div>
-  <div class="panel-box">
-    <button class="panel-close" onclick="closeAllPanels()">✕</button>
-    <div class="panel-title">⌚ من نحن</div>
-    <div class="about-section">
+  <div class="p-ov" onclick="closeAllPanels()"></div>
+  <div class="p-box">
+    <button class="p-close" onclick="closeAllPanels()">✕</button>
+    <div class="p-title">⌚ من نحن</div>
+    <div class="a-sec">
       <h3>زون للساعات الفاخرة</h3>
-      <p>متجر متخصص في الساعات الفاخرة منذ عام 2024. نقدم تجربة تسوق فريدة مع ضمان الجودة والأصالة لكل قطعة في مجموعتنا.</p>
+      <p>متجر متخصص في الساعات الفاخرة منذ عام 2024. نقدم تجربة تسوق فريدة مع ضمان الجودة والأصالة لكل قطعة.</p>
     </div>
-    <div class="about-section">
+    <div class="a-sec">
       <h3>تواصل معنا</h3>
-      <div class="social-links">
-        <a class="social-link" href="https://wa.me/9647734383437" target="_blank">📱 واتساب</a>
-        <a class="social-link" href="https://instagram.com/zone.watches" target="_blank">📸 إنستغرام</a>
-        <a class="social-link" href="https://t.me/zone_watches" target="_blank">✈️ تيليغرام</a>
+      <div class="social-row">
+        <a class="soc-link" href="https://wa.me/9647734383437" target="_blank">📱 واتساب</a>
+        <a class="soc-link" href="https://instagram.com/zone.watches" target="_blank">📸 إنستغرام</a>
+        <a class="soc-link" href="https://t.me/zone_watches" target="_blank">✈️ تيليغرام</a>
       </div>
     </div>
-    <div class="about-section">
-      <h3>ساعات العمل</h3>
-      <p>يومياً من 10 صباحاً حتى 10 مساءً</p>
-    </div>
-    <div class="about-section">
-      <h3>رقم الحجز</h3>
-      <p style="font-family:'Space Mono',monospace;font-size:18px;letter-spacing:.05em;">07734383437</p>
-    </div>
-    <div class="about-section">
-      <h3>الضمان</h3>
-      <p>جميع ساعاتنا أصلية مع ضمان سنة كاملة على كل قطعة.</p>
-    </div>
+    <div class="a-sec"><h3>ساعات العمل</h3><p>يومياً · 10 صباحاً — 10 مساءً</p></div>
+    <div class="a-sec"><h3>رقم الحجز</h3><p style="font-family:'Space Mono',monospace;font-size:20px;letter-spacing:.04em">07734383437</p></div>
+    <div class="a-sec"><h3>الضمان</h3><p>جميع ساعاتنا أصلية مع ضمان سنة كاملة على كل قطعة.</p></div>
   </div>
 </div>
 
-<!-- ═══ ADMIN PANEL ═══ -->
+<!-- ADMIN PANEL -->
 <div class="panel" id="panel-admin">
-  <div class="panel-overlay" onclick="closeAllPanels()"></div>
-  <div class="panel-box" id="admin-box">
-    <!-- Login screen -->
-    <div id="admin-login-screen">
-      <button class="panel-close" onclick="closeAllPanels()">✕</button>
-      <div class="panel-title">🔐 دخول الإدارة</div>
-      <div class="admin-login">
-        <input type="password" id="admin-pass" placeholder="كلمة المرور" onkeydown="if(event.key==='Enter')adminLogin()"/>
-        <button class="save-btn" onclick="adminLogin()">دخول</button>
-        <p id="admin-err" style="color:#e00;font-size:11px;margin-top:10px;display:none">كلمة مرور خاطئة</p>
+  <div class="p-ov" onclick="closeAllPanels()"></div>
+  <div class="p-box">
+    <button class="p-close" onclick="closeAllPanels()">✕</button>
+
+    <!-- Login -->
+    <div id="adm-login">
+      <div class="p-title">🔐 دخول الإدارة</div>
+      <div class="login-box">
+        <input type="password" id="adm-pass" placeholder="كلمة المرور" onkeydown="if(event.key==='Enter')doLogin()"/>
+        <button class="adm-save" onclick="doLogin()">دخول</button>
+        <div class="err-msg" id="adm-err">كلمة مرور خاطئة</div>
       </div>
     </div>
-    <!-- Admin dashboard -->
-    <div id="admin-dashboard" style="display:none">
-      <button class="panel-close" onclick="closeAllPanels()">✕</button>
-      <div class="panel-title">⚙️ لوحة الإدارة</div>
-      <div class="admin-tabs">
-        <button class="atab active" onclick="switchAdminTab('watches',this)">الساعات</button>
-        <button class="atab" onclick="switchAdminTab('add',this)">إضافة ساعة</button>
-      </div>
-      <!-- Watches list -->
-      <div id="atab-watches">
-        <div id="admin-watch-list"></div>
-      </div>
-      <!-- Add watch -->
-      <div id="atab-add" style="display:none">
-        <p style="font-size:11px;color:var(--text2);margin-bottom:14px;line-height:1.6;">ارفع صورة الساعة — الذكاء الاصطناعي سيتعرف عليها تلقائياً ويجلب صورة احترافية نظيفة بدون خلفية</p>
 
-        <div class="upload-area" id="upload-area" onclick="document.getElementById('img-upload').click()">
-          <div id="upload-idle">
-            <p style="font-size:22px;margin-bottom:6px">📸</p>
-            <p style="font-size:12px;font-weight:600;">اضغط لرفع صورة الساعة</p>
-            <p style="font-size:10px;margin-top:4px;opacity:.55">الذكاء الاصطناعي سيتعرف عليها ويجلب صورة نظيفة</p>
-          </div>
-          <div id="upload-loading" style="display:none;text-align:center">
-            <div class="ai-spinner"></div>
-            <p id="ai-status" style="font-size:11px;margin-top:8px;color:var(--text2)">جارٍ التعرف على الساعة...</p>
-          </div>
-          <div id="upload-result" style="display:none;text-align:center">
-            <img id="img-preview" style="max-width:130px;max-height:130px;margin:0 auto 8px;display:block;filter:drop-shadow(0 6px 20px rgba(0,0,0,0.15));" alt=""/>
-            <p id="ai-detected" style="font-size:11px;color:var(--text2);"></p>
+    <!-- Dashboard -->
+    <div id="adm-dash" style="display:none">
+      <div class="p-title">⚙️ لوحة الإدارة</div>
+      <div class="admin-tabs">
+        <button class="atab act" onclick="aTab('list',this)">الساعات</button>
+        <button class="atab" onclick="aTab('add',this)">إضافة ساعة +</button>
+      </div>
+
+      <!-- List -->
+      <div id="adm-list"></div>
+
+      <!-- Add -->
+      <div id="adm-add" style="display:none">
+        <div class="upload-box" id="ubox" onclick="document.getElementById('ufile').click()">
+          <div id="u-idle"><p style="font-size:20px">📸</p><p>اضغط لرفع صورة الساعة</p><p class="sub">الذكاء الاصطناعي سيتعرف عليها تلقائياً</p></div>
+          <div id="u-loading" style="display:none"><div class="spin"></div><p id="u-status" style="font-size:10px;color:var(--text2);margin-top:8px">جارٍ التحليل...</p></div>
+          <div id="u-done" style="display:none;text-align:center">
+            <img id="u-preview" style="max-width:110px;max-height:110px;filter:drop-shadow(0 4px 16px rgba(0,0,0,0.15));" alt=""/>
+            <p id="u-detected" style="font-size:10px;color:var(--text2);margin-top:6px;"></p>
           </div>
         </div>
-        <input type="file" id="img-upload" accept="image/*" style="display:none" onchange="handleImgUpload(this)"/>
+        <input type="file" id="ufile" accept="image/*" style="display:none" onchange="handleUpload(this)"/>
 
-        <div class="admin-form-row">
-          <div class="form-group"><label>اسم الساعة</label><input type="text" id="new-name" placeholder="رولكس سابمارينر"/></div>
-          <div class="form-group"><label>الماركة / الفئة</label>
-            <select id="new-cat" style="width:100%;padding:11px 14px;background:var(--bg);border:1px solid var(--border);border-radius:3px;font-size:13px;color:var(--text);font-family:'Inter',sans-serif;">
+        <div class="adm-row">
+          <div class="fg"><label>اسم الساعة</label><input type="text" id="n-name" placeholder="رولكس سابمارينر"/></div>
+          <div class="fg"><label>الفئة / الماركة</label>
+            <select id="n-cat" style="width:100%;padding:10px 13px;background:var(--bg);border:1px solid var(--border);border-radius:3px;font-size:13px;color:var(--text);font-family:inherit;">
               <option value="Sport">رياضي</option>
               <option value="Classic">كلاسيك</option>
               <option value="Rolex">رولكس</option>
@@ -441,601 +495,469 @@ header{position:fixed;top:0;left:0;right:0;z-index:200;padding:12px 32px;display
               <option value="Omega">أوميغا</option>
               <option value="Cartier">كارتييه</option>
               <option value="Richard">ريتشارد ميل</option>
-              <option value="Other">أخرى</option>
             </select>
           </div>
         </div>
-        <div class="form-group"><label>السعر ($)</label><input type="number" id="new-price" placeholder="10000"/></div>
-        <button class="save-btn" id="add-watch-btn" onclick="addNewWatch()">✓ إضافة الساعة</button>
+        <div class="fg"><label>السعر (دينار عراقي)</label><input type="number" id="n-price" placeholder="15000000"/></div>
+        <button class="adm-save" onclick="addWatch()">✓ إضافة الساعة</button>
       </div>
     </div>
   </div>
 </div>
 
-<!-- FILTER BAR -->
-<div id="filter-bar">
-  <button class="add-btn" onclick="showPanel('admin')">+</button>
-  <div class="sep"></div>
-  <button class="fbtn active" data-f="All">الكل</button>
-  <div class="sep"></div>
-  <button class="fbtn" data-f="Sport">رياضي</button>
-  <div class="sep"></div>
-  <button class="fbtn" data-f="Classic">كلاسيك</button>
-  <div class="sep"></div>
-  <button class="fbtn" data-f="Rolex">رولكس</button>
-  <div class="sep"></div>
-  <button class="fbtn" data-f="Patek">باتيك</button>
-  <div class="sep"></div>
-  <button class="fbtn" data-f="AP">أوديمار</button>
-  <div class="sep"></div>
-  <button class="fbtn" data-f="Omega">أوميغا</button>
-  <div class="sep"></div>
-  <button class="fbtn" data-f="Under $10k">تحت $10k</button>
-  <div class="sep"></div>
-  <button class="fbtn" data-f="Premium">بريميوم</button>
-</div>
-
-<div id="count-badge">20 ساعة</div>
-<div id="scroll-hint"><span>Scroll</span><div class="scroll-arr"></div></div>
-<div id="toast"></div>
-
 <!-- PWA BANNER -->
-<div id="install-banner">
+<div id="pwa-banner">
   <img src="icons/icon-192.png" alt="زون"/>
-  <div class="ib-text"><strong>أضف زون للشاشة الرئيسية</strong><span>وصول سريع للمجموعة</span></div>
-  <div class="ib-btns">
-    <button class="ib-install" id="install-btn">تثبيت</button>
-    <button class="ib-close" onclick="dismissInstall()">✕</button>
+  <div class="pwa-text"><strong>أضف زون للشاشة الرئيسية</strong><span>وصول سريع للمجموعة</span></div>
+  <div class="pwa-btns">
+    <button class="pwa-install" id="pwa-install-btn">تثبيت</button>
+    <button class="pwa-x" onclick="dismissPWA()">✕</button>
   </div>
 </div>
 
 <script>
 /* ══ THEME ══ */
-const saved=localStorage.getItem('zone-theme')||'light';
-document.documentElement.setAttribute('data-theme',saved);
+const ST = localStorage.getItem('zt') || 'light';
+document.documentElement.setAttribute('data-theme', ST);
 function toggleTheme(){
-  const cur=document.documentElement.getAttribute('data-theme');
-  const next=cur==='dark'?'light':'dark';
-  document.documentElement.setAttribute('data-theme',next);
-  localStorage.setItem('zone-theme',next);
+  const n = document.documentElement.getAttribute('data-theme') === 'dark' ? 'light' : 'dark';
+  document.documentElement.setAttribute('data-theme', n);
+  localStorage.setItem('zt', n);
 }
+
+/* ══ IQD RATE ══ */
+const IQD = 1; // prices already in IQD
+function fmt(p){ return p.toLocaleString('ar-IQ') + ' د.ع'; }
 
 /* ══ WATCHES DATA ══ */
-let WATCHES = JSON.parse(localStorage.getItem('zone-watches')||'null') || [
-  {id:1, name:'رولكس سابمارينر',       price:10250, img:'watches/watch_1.png',  cat:'Sport'},
-  {id:2, name:'رولكس دايتونا',          price:15100, img:'watches/watch_2.png',  cat:'Sport'},
-  {id:3, name:'رولكس GMT-Master II',   price:10900, img:'watches/watch_3.png',  cat:'Sport'},
-  {id:4, name:'رولكس داتجست 36',       price:8950,  img:'watches/watch_4.png',  cat:'Classic'},
-  {id:5, name:'رولكس أويستر بيربتشوال',price:6100,  img:'watches/watch_5.png',  cat:'Classic'},
-  {id:6, name:'رولكس إكسبلورر',        price:7250,  img:'watches/watch_6.png',  cat:'Sport'},
-  {id:7, name:'رولكس سي-دويلر',        price:13250, img:'watches/watch_7.png',  cat:'Sport'},
-  {id:8, name:'رولكس يخت-ماستر',       price:12300, img:'watches/watch_8.png',  cat:'Sport'},
-  {id:9, name:'رولكس سكاي-دويلر',      price:15650, img:'watches/watch_9.png',  cat:'Classic'},
-  {id:10,name:'رولكس داي-داي 40',      price:40350, img:'watches/watch_10.png', cat:'Classic'},
-  {id:11,name:'رولكس إير-كينج',        price:7450,  img:'watches/watch_11.png', cat:'Sport'},
-  {id:12,name:'رولكس ميلغاوس',         price:9150,  img:'watches/watch_12.png', cat:'Classic'},
-  {id:13,name:'رولكس سابمارينر داي',   price:10250, img:'watches/watch_1.png',  cat:'Sport'},
-  {id:14,name:'رولكس دايتونا ذهبي',    price:18100, img:'watches/watch_2.png',  cat:'Sport'},
-  {id:15,name:'رولكس GMT سبرايت',      price:11900, img:'watches/watch_3.png',  cat:'Sport'},
-  {id:16,name:'رولكس داتجست 41',       price:9950,  img:'watches/watch_4.png',  cat:'Classic'},
-  {id:17,name:'رولكس أويستر 41mm',     price:7100,  img:'watches/watch_5.png',  cat:'Classic'},
-  {id:18,name:'رولكس إكسبلورر II',     price:9250,  img:'watches/watch_6.png',  cat:'Sport'},
-  {id:19,name:'رولكس ديب سي',          price:15250, img:'watches/watch_7.png',  cat:'Sport'},
-  {id:20,name:'رولكس يخت-ماستر II',    price:18300, img:'watches/watch_8.png',  cat:'Sport'},
+let WD = JSON.parse(localStorage.getItem('zw') || 'null') || [
+  {id:1,  name:'رولكس سابمارينر',        price:15000000, img:'watches/watch_1.png',  cat:'Sport'},
+  {id:2,  name:'رولكس دايتونا',           price:22000000, img:'watches/watch_2.png',  cat:'Sport'},
+  {id:3,  name:'رولكس GMT-Master II',    price:16000000, img:'watches/watch_3.png',  cat:'Sport'},
+  {id:4,  name:'رولكس داتجست 36',        price:13000000, img:'watches/watch_4.png',  cat:'Classic'},
+  {id:5,  name:'رولكس أويستر بيربتشوال', price:9000000,  img:'watches/watch_5.png',  cat:'Classic'},
+  {id:6,  name:'رولكس إكسبلورر',         price:10500000, img:'watches/watch_6.png',  cat:'Sport'},
+  {id:7,  name:'رولكس سي-دويلر',         price:19000000, img:'watches/watch_7.png',  cat:'Sport'},
+  {id:8,  name:'رولكس يخت-ماستر',        price:18000000, img:'watches/watch_8.png',  cat:'Sport'},
+  {id:9,  name:'رولكس سكاي-دويلر',       price:23000000, img:'watches/watch_9.png',  cat:'Classic'},
+  {id:10, name:'رولكس داي-داي 40',       price:58000000, img:'watches/watch_10.png', cat:'Classic'},
+  {id:11, name:'رولكس إير-كينج',         price:11000000, img:'watches/watch_11.png', cat:'Sport'},
+  {id:12, name:'رولكس ميلغاوس',          price:13500000, img:'watches/watch_12.png', cat:'Classic'},
+  {id:13, name:'رولكس سابمارينر داي',    price:15000000, img:'watches/watch_1.png',  cat:'Sport'},
+  {id:14, name:'رولكس دايتونا ذهبي',     price:26000000, img:'watches/watch_2.png',  cat:'Sport'},
+  {id:15, name:'رولكس GMT سبرايت',       price:17000000, img:'watches/watch_3.png',  cat:'Sport'},
+  {id:16, name:'رولكس داتجست 41',        price:14500000, img:'watches/watch_4.png',  cat:'Classic'},
+  {id:17, name:'رولكس أويستر 41mm',      price:10500000, img:'watches/watch_5.png',  cat:'Classic'},
+  {id:18, name:'رولكس إكسبلورر II',      price:13500000, img:'watches/watch_6.png',  cat:'Sport'},
+  {id:19, name:'رولكس ديب سي',           price:22000000, img:'watches/watch_7.png',  cat:'Sport'},
+  {id:20, name:'رولكس يخت-ماستر II',     price:26000000, img:'watches/watch_8.png',  cat:'Sport'},
 ];
-function saveWatches(){localStorage.setItem('zone-watches',JSON.stringify(WATCHES));}
+function saveWD(){ localStorage.setItem('zw', JSON.stringify(WD)); }
 
 /* ══ CART ══ */
-let cart=[];
-function cartTotal(){return cart.reduce((s,i)=>s+i.price,0);}
-function updateCartBadge(){document.getElementById('cart-n').textContent=cart.length;}
+let cart = [];
+function cartSum(){ return cart.reduce((s,i)=>s+i.price,0); }
+function updBadge(){ document.getElementById('cart-n').textContent = cart.length; }
 
-/* ══ SCENE ══ */
-const isMobile=()=>window.innerWidth<=700;
-const DURS=[3.2,4.1,2.8,3.7,4.5,3.9,2.6,4.3,3.4,5.0,4.7,3.1,2.9,4.0,3.6,5.1,3.3,4.8,2.7,3.8];
-const DELAYS=[0,-.8,-1.5,-.3,-2.1,-.7,-1.2,-.4,-1.8,-.6,-2.4,-1,-.2,-1.6,-.9,-2.2,-.5,-1.3,-2,-.1];
-const ROTS=['-2deg','1.5deg','-1deg','2deg','-1.5deg','1deg','-2.5deg','0.5deg','-1.2deg','2.5deg','-0.8deg','1.8deg','-2deg','0.8deg','-1.5deg','2.2deg','-0.5deg','1.2deg','-2.2deg','0.3deg'];
-const BOBS=['-12px','-16px','-10px','-14px','-18px','-13px','-9px','-17px','-11px','-20px','-15px','-8px','-14px','-12px','-16px','-19px','-10px','-18px','-9px','-13px'];
+/* ══ SCENE BUILD ══ */
+const mob = () => window.innerWidth <= 640;
+const DURS   = [3.2,4.1,2.8,3.7,4.5,3.9,2.6,4.3,3.4,5.0,4.7,3.1,2.9,4.0,3.6,5.1,3.3,4.8,2.7,3.8];
+const DELAYS = [0,-.8,-1.5,-.3,-2.1,-.7,-1.2,-.4,-1.8,-.6,-2.4,-1,-.2,-1.6,-.9,-2.2,-.5,-1.3,-2,-.1];
+const ROTS   = ['-2deg','1.5deg','-1deg','2deg','-1.5deg','1deg','-2.5deg','0.5deg','-1.2deg','2.5deg','-0.8deg','1.8deg','-2deg','0.8deg','-1.5deg','2.2deg','-0.5deg','1.2deg','-2.2deg','0.3deg'];
+const BOBS   = ['-14px','-18px','-11px','-15px','-20px','-13px','-10px','-17px','-12px','-22px','-16px','-9px','-15px','-13px','-17px','-21px','-11px','-19px','-10px','-14px'];
 
-const sceneEl=document.getElementById('scene');
-let items=[],activeFilter='All',scrollOffset=0;
-let mouseX=0,mouseY=0,rotX=0,rotY=0;
-let currentModalWatch=null;
-
-function getLayout(){
-  if(isMobile()){
-    // Mobile: 2 columns, bigger, simpler
-    return{cols:2,spacex:140,spacey:140,size:110};
-  }
-  return{cols:5,spacex:165,spacey:155,size:125};
-}
+const sceneEl = document.getElementById('scene');
+let items = [], activeF = 'All', scrollY = 0, mx = 0, my = 0, rx = 0, ry = 0;
+let zoomWatch = null;
 
 function buildGrid(){
-  sceneEl.innerHTML='';items=[];
-  const {cols,spacex,spacey,size}=getLayout();
-  const rows=Math.ceil(WATCHES.length/cols);
-  const totalW=(cols-1)*spacex, totalH=(rows-1)*spacey;
+  sceneEl.innerHTML = ''; items = [];
+  const cols = mob() ? 2 : 5;
+  const sx = mob() ? 145 : 165, sy = mob() ? 145 : 155;
+  const sz = mob() ? 115 : 125;
+  const rows = Math.ceil(WD.length / cols);
+  const tw = (cols-1)*sx, th = (rows-1)*sy;
 
-  WATCHES.forEach((w,i)=>{
-    const col=i%cols, row=Math.floor(i/cols);
-    const x=col*spacex-totalW/2, y=row*spacey-totalH/2;
-    const cx=(col-(cols-1)/2)/Math.max((cols-1)/2,1);
-    const cy=(row-(rows-1)/2)/Math.max((rows-1)/2,1);
-    const dist=Math.sqrt(cx*cx+cy*cy);
-    const z=isMobile()?0:-dist*dist*75;
+  WD.forEach((w,i)=>{
+    const col = i%cols, row = Math.floor(i/cols);
+    const x = col*sx - tw/2, y = row*sy - th/2;
+    const cx = cols>1 ? (col-(cols-1)/2)/((cols-1)/2) : 0;
+    const cy = rows>1 ? (row-(rows-1)/2)/((rows-1)/2) : 0;
+    const dist = Math.sqrt(cx*cx+cy*cy);
+    const z = mob() ? 0 : -dist*dist*72;
 
-    const wi=document.createElement('div');
-    wi.className='wi';
-    wi.dataset.idx=i;
-    wi.style.cssText=`width:${size}px;height:${size}px;left:${x-size/2}px;top:${y-size/2}px;--rot:${ROTS[i%ROTS.length]};--bob:${BOBS[i%BOBS.length]};--dur:${DURS[i%DURS.length]}s;--delay:${DELAYS[i%DELAYS.length]}s;transform:translateZ(${z}px);z-index:${Math.round(100-dist*10)};`;
+    const wi = document.createElement('div');
+    wi.className = 'wi';
+    wi.style.cssText = `width:${sz}px;height:${sz}px;left:${x-sz/2}px;top:${y-sz/2}px;--rot:${ROTS[i%ROTS.length]};--bob:${BOBS[i%BOBS.length]};--dur:${DURS[i%DURS.length]}s;--delay:${DELAYS[i%DELAYS.length]}s;transform:translateZ(${z}px);z-index:${Math.round(100-dist*10)};`;
 
-    // Placeholder (shown before click)
-    const ph=document.createElement('div');
-    ph.className='wi-placeholder';
-    ph.style.cssText='width:100%;height:100%;position:relative;';
-
-    // Image (hidden until click)
-    const img=document.createElement('img');
-    img.src=w.img; img.alt=w.name;
-    img.style.cssText=`width:${size}px;height:${size}px;`;
-
-    wi.appendChild(ph);
+    const img = document.createElement('img');
+    img.src = w.img; img.alt = w.name;
     wi.appendChild(img);
 
-    // HOVER — strong parallax effect on placeholder
-    wi.addEventListener('mouseenter',()=>{
-      if(document.getElementById('product-modal').classList.contains('show'))return;
-      wi.classList.add('hovering');
-      items.forEach((it,j)=>{if(j!==i)it.el.classList.add('faded')});
+    wi.addEventListener('mouseenter', ()=>{
+      if(document.getElementById('zoom-overlay').classList.contains('show')) return;
+      items.forEach((it,j)=>{ if(j!==i) it.el.classList.add('faded'); });
     });
-    wi.addEventListener('mouseleave',()=>{
-      wi.classList.remove('hovering');
+    wi.addEventListener('mouseleave', ()=>{
       items.forEach(it=>it.el.classList.remove('faded'));
     });
-
-    // CLICK — reveal image + open modal
-    wi.addEventListener('click',()=>{
-      openProductModal(w, img.src);
-    });
+    wi.addEventListener('click', ()=>{ openZoom(w); });
 
     sceneEl.appendChild(wi);
-    items.push({el:wi,watch:w});
+    items.push({el:wi, watch:w});
   });
-  applyFilter();
+  applyF();
+  updateBrandBtns();
 }
 
-/* ══ PRODUCT MODAL ══ */
-function openProductModal(w, imgSrc){
-  currentModalWatch=w;
-  document.getElementById('modal-img').src=imgSrc||w.img;
-  document.getElementById('modal-cat').textContent=w.cat==='Sport'?'رياضي':'كلاسيك';
-  document.getElementById('modal-name').textContent=w.name;
-  document.getElementById('modal-price').textContent='$'+w.price.toLocaleString();
-  document.getElementById('product-modal').classList.add('show');
-  items.forEach(it=>it.el.classList.add('faded'));
+/* ══ ZOOM — مثل الفيديو تماماً ══ */
+function openZoom(w){
+  zoomWatch = w;
+  document.getElementById('zoom-img').src = w.img;
+  document.getElementById('zoom-name').textContent = w.name;
+  document.getElementById('zoom-price').textContent = fmt(w.price);
+  document.getElementById('zoom-overlay').classList.add('show');
+  items.forEach(it=>{ if(it.watch.id!==w.id) it.el.classList.add('faded'); });
 }
-function closeModal(){
-  document.getElementById('product-modal').classList.remove('show');
-  items.forEach(it=>it.el.classList.remove('faded','hovering'));
-  currentModalWatch=null;
+function closeZoom(){
+  document.getElementById('zoom-overlay').classList.remove('show');
+  items.forEach(it=>it.el.classList.remove('faded'));
+  zoomWatch = null;
 }
-function addToCartFromModal(){
-  if(!currentModalWatch)return;
-  cart.push({...currentModalWatch});
-  updateCartBadge();
-  showToast('✓ أضيف للسلة: '+currentModalWatch.name);
-  closeModal();
+function addZoomToCart(){
+  if(!zoomWatch) return;
+  cart.push({...zoomWatch}); updBadge();
+  toast('✓ أضيف للسلة: ' + zoomWatch.name);
+  closeZoom();
 }
-function openBookFromModal(){
-  if(!currentModalWatch){closeModal();showPanel('book');return;}
-  document.getElementById('book-watch-summary').innerHTML=
-    `<b>${currentModalWatch.name}</b> · $${currentModalWatch.price.toLocaleString()}`;
-  closeModal();
-  showPanel('book');
+function openBookForZoom(){
+  if(!zoomWatch) return;
+  const w = zoomWatch; closeZoom();
+  document.getElementById('order-summary').innerHTML =
+    '<b>' + w.name + '</b><br>' + fmt(w.price);
+  openPanel('book');
 }
 
 /* ══ FILTER ══ */
-function applyFilter(){
+function applyF(){
   let v=0;
   items.forEach(({el,watch})=>{
-    let show=false;
-    if(activeFilter==='All') show=true;
-    else if(activeFilter==='Under $10k') show=watch.price<10000;
-    else if(activeFilter==='Premium') show=watch.price>=15000;
-    else show=watch.cat===activeFilter; // Sport, Classic, Rolex, Patek, AP, Omega, Cartier, Richard, Other
-    el.style.opacity=show?'':'0';
-    el.style.pointerEvents=show?'':'none';
-    if(show)v++;
+    let show = false;
+    if(activeF==='All') show=true;
+    else if(activeF==='Under') show=watch.price<15000000;
+    else if(activeF==='Premium') show=watch.price>=20000000;
+    else show=(watch.cat===activeF);
+    el.style.opacity = show?'':'0';
+    el.style.pointerEvents = show?'':'none';
+    if(show) v++;
   });
-  document.getElementById('count-badge').textContent=v+' ساعة';
-  // Show/hide filter buttons based on existing cats
-  updateFilterVisibility();
+  document.getElementById('count-badge').textContent = v + ' ساعة';
+}
+function updateBrandBtns(){
+  const cats = new Set(WD.map(w=>w.cat));
+  const brands = ['Rolex','Patek','AP','Omega','Cartier','Richard'];
+  brands.forEach(b=>{
+    const btn = document.querySelector('.brand-btn[data-f="'+b+'"]');
+    const sep = btn?.previousElementSibling;
+    const show = cats.has(b);
+    if(btn){ btn.style.display = show?'':'none'; }
+    if(sep){ sep.style.display = show?'':'none'; }
+  });
 }
 
-function updateFilterVisibility(){
-  const cats=new Set(WATCHES.map(w=>w.cat));
-  const brandBtns=['Rolex','Patek','AP','Omega','Cartier','Richard'];
-  brandBtns.forEach(b=>{
-    const btn=document.querySelector(\`.fbtn[data-f="\${b}"]\`);
-    if(btn) btn.style.display=cats.has(b)?'''none';
-  });
-}
-
-/* ══ PARALLAX — strong mouse effect ══ */
-document.addEventListener('mousemove',e=>{
-  mouseX=(e.clientX/window.innerWidth-.5)*2;
-  mouseY=(e.clientY/window.innerHeight-.5)*2;
-  // Per-item depth parallax — very strong
-  items.forEach(({el},i)=>{
-    const depth=(i%5)*0.5+0.5;
-    const ox=mouseX*depth*22;
-    const oy=mouseY*depth*14;
-    el.style.marginLeft=ox+'px';
-    el.style.marginTop=oy+'px';
-  });
-});
-
-function animate(){
-  rotX+=(mouseY*-8-rotX)*.07;  // stronger tilt
-  rotY+=(mouseX*12-rotY)*.07;
-  const modalOpen=document.getElementById('product-modal').classList.contains('show');
-  sceneEl.style.transform=modalOpen
-    ?`translate(-50%,-50%) rotateX(0) rotateY(0)`
-    :`translate(-50%,-50%) translateY(${scrollOffset}px) rotateX(${rotX}deg) rotateY(${rotY}deg)`;
-  requestAnimationFrame(animate);
-}
-animate();
-
-/* ══ SCROLL ══ */
-document.getElementById('scene-wrap').addEventListener('wheel',e=>{
-  if(document.getElementById('product-modal').classList.contains('show'))return;
-  scrollOffset-=e.deltaY*.55;
-  scrollOffset=Math.max(-380,Math.min(380,scrollOffset));
-},{passive:true});
-let lastTY=0;
-document.addEventListener('touchstart',e=>{lastTY=e.touches[0].clientY},{passive:true});
-document.addEventListener('touchmove',e=>{
-  if(document.getElementById('product-modal').classList.contains('show'))return;
-  const dy=lastTY-e.touches[0].clientY;
-  scrollOffset-=dy*.8;scrollOffset=Math.max(-380,Math.min(380,scrollOffset));
-  lastTY=e.touches[0].clientY;
-},{passive:true});
-
-document.getElementById('scene-wrap').addEventListener('click',e=>{
-  if(e.target===document.getElementById('scene-wrap')||e.target===sceneEl)closeModal();
-});
-
-/* ══ FILTER BUTTONS ══ */
 document.querySelectorAll('.fbtn').forEach(btn=>{
   btn.addEventListener('click',()=>{
-    closeModal();
-    document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('active'));
-    btn.classList.add('active');activeFilter=btn.dataset.f;applyFilter();
+    closeZoom();
+    document.querySelectorAll('.fbtn').forEach(b=>b.classList.remove('act'));
+    btn.classList.add('act');
+    activeF = btn.dataset.f;
+    applyF();
   });
+});
+
+/* ══ PARALLAX — قوي ══ */
+document.addEventListener('mousemove',e=>{
+  mx = (e.clientX/window.innerWidth-.5)*2;
+  my = (e.clientY/window.innerHeight-.5)*2;
+  if(document.getElementById('zoom-overlay').classList.contains('show')) return;
+  items.forEach(({el},i)=>{
+    const d = (i%5)*0.6+0.4;
+    el.style.marginLeft = (mx*d*20)+'px';
+    el.style.marginTop  = (my*d*12)+'px';
+  });
+});
+function animLoop(){
+  rx += (my*-8-rx)*.07;
+  ry += (mx*12-ry)*.07;
+  const zo = document.getElementById('zoom-overlay').classList.contains('show');
+  sceneEl.style.transform = zo
+    ? 'translate(-50%,-50%)'
+    : `translate(-50%,-50%) translateY(${scrollY}px) rotateX(${rx}deg) rotateY(${ry}deg)`;
+  requestAnimationFrame(animLoop);
+}
+animLoop();
+
+document.getElementById('scene-wrap').addEventListener('wheel',e=>{
+  if(document.getElementById('zoom-overlay').classList.contains('show')) return;
+  scrollY -= e.deltaY*.55;
+  scrollY = Math.max(-400,Math.min(400,scrollY));
+},{passive:true});
+let lty=0;
+document.addEventListener('touchstart',e=>{lty=e.touches[0].clientY;},{passive:true});
+document.addEventListener('touchmove',e=>{
+  if(document.getElementById('zoom-overlay').classList.contains('show')) return;
+  const dy=lty-e.touches[0].clientY;
+  scrollY-=dy*.8; scrollY=Math.max(-400,Math.min(400,scrollY));
+  lty=e.touches[0].clientY;
+},{passive:true});
+document.getElementById('scene-wrap').addEventListener('click',e=>{
+  if(e.target===document.getElementById('scene-wrap')||e.target===sceneEl) closeZoom();
 });
 
 /* ══ PANELS ══ */
-function showPanel(id){
+function openPanel(id){
   closeAllPanels();
-  if(id==='cart')renderCart();
-  if(id==='admin')renderAdminWatches();
-  const p=document.getElementById('panel-'+id);
-  if(p)p.classList.add('show');
+  if(id==='cart') renderCart();
+  if(id==='admin'){
+    if(admLoggedIn){
+      document.getElementById('adm-login').style.display='none';
+      document.getElementById('adm-dash').style.display='block';
+      renderAdmList();
+    } else {
+      document.getElementById('adm-login').style.display='block';
+      document.getElementById('adm-dash').style.display='none';
+    }
+  }
+  document.getElementById('panel-'+id)?.classList.add('show');
 }
 function closeAllPanels(){
   document.querySelectorAll('.panel').forEach(p=>p.classList.remove('show'));
 }
 
-/* ══ CART PANEL ══ */
+/* ══ CART ══ */
 function renderCart(){
-  const el=document.getElementById('cart-items');
-  const footer=document.getElementById('cart-footer');
-  if(cart.length===0){
+  const el = document.getElementById('cart-list');
+  const ft = document.getElementById('cart-foot');
+  if(!cart.length){
     el.innerHTML='<div class="cart-empty">السلة فارغة 🛒</div>';
-    footer.style.display='none';return;
+    ft.style.display='none'; return;
   }
-  el.innerHTML=cart.map((w,i)=>`
-    <div class="cart-item">
+  el.innerHTML = cart.map((w,i)=>`
+    <div class="ci">
       <img src="${w.img}" alt="${w.name}"/>
       <div class="ci-info">
         <div class="ci-name">${w.name}</div>
-        <div class="ci-price">$${w.price.toLocaleString()}</div>
+        <div class="ci-price">${fmt(w.price)}</div>
       </div>
-      <button class="ci-rm" onclick="removeFromCart(${i})">✕</button>
-    </div>
-  `).join('');
-  footer.style.display='block';
-  document.getElementById('cart-total-val').textContent='$'+cartTotal().toLocaleString();
+      <button class="ci-rm" onclick="rmCart(${i})">✕</button>
+    </div>`).join('');
+  ft.style.display='block';
+  document.getElementById('cart-total').textContent = fmt(cartSum());
 }
-function removeFromCart(i){
-  cart.splice(i,1);updateCartBadge();renderCart();
+function rmCart(i){ cart.splice(i,1); updBadge(); renderCart(); }
+function goToBook(){
+  // Build full order summary with all cart items
+  const lines = cart.map(w=>`• ${w.name} — ${fmt(w.price)}`).join('\n');
+  document.getElementById('order-summary').innerHTML =
+    cart.map(w=>`<div>• <b>${w.name}</b> — ${fmt(w.price)}</div>`).join('') +
+    `<div style="margin-top:8px;font-weight:700;">المجموع: ${fmt(cartSum())}</div>`;
+  openPanel('book');
 }
 
 /* ══ BOOK / WHATSAPP ══ */
-const WA_NUMBER='9647734383437';
-function sendWhatsApp(){
-  const name=document.getElementById('book-name').value.trim();
-  const phone=document.getElementById('book-phone').value.trim();
-  const addr=document.getElementById('book-addr').value.trim();
-  if(!name||!phone){showToast('⚠️ أكمل الاسم والهاتف');return;}
-  const summary=document.getElementById('book-watch-summary').textContent||cart.map(w=>w.name+' $'+w.price.toLocaleString()).join('\n');
-  const msg=`🕰️ *طلب حجز - زون للساعات*\n\n👤 الاسم: ${name}\n📞 الهاتف: ${phone}\n📍 العنوان: ${addr||'غير محدد'}\n\n⌚ الطلب:\n${summary}\n\nشكراً!`;
-  window.open('https://wa.me/'+WA_NUMBER+'?text='+encodeURIComponent(msg),'_blank');
+const WA = '9647734383437';
+function sendWA(){
+  const name = document.getElementById('bk-name').value.trim();
+  const phone = document.getElementById('bk-phone').value.trim();
+  const addr  = document.getElementById('bk-addr').value.trim();
+  if(!name||!phone){ toast('⚠️ أكمل الاسم والهاتف'); return; }
+
+  // Build order text — all cart items or single booking
+  let orderText = document.getElementById('order-summary').innerText;
+  const msg = `🕰️ *طلب حجز — زون للساعات الفاخرة*\n\n👤 الاسم: ${name}\n📞 الهاتف: ${phone}\n📍 العنوان: ${addr||'غير محدد'}\n\n⌚ الطلب:\n${orderText}\n\nشكراً!`;
+  window.open('https://wa.me/'+WA+'?text='+encodeURIComponent(msg),'_blank');
   closeAllPanels();
-  showToast('✓ تم الإرسال عبر واتساب');
+  toast('✓ تم الإرسال عبر واتساب');
 }
 
 /* ══ ADMIN ══ */
-const ADMIN_PASS='zone2024';
-let adminLoggedIn=false;
-function adminLogin(){
-  const p=document.getElementById('admin-pass').value;
-  if(p===ADMIN_PASS){
-    adminLoggedIn=true;
-    document.getElementById('admin-login-screen').style.display='none';
-    document.getElementById('admin-dashboard').style.display='block';
-    renderAdminWatches();
+const ADM_PASS = 'zone2024';
+let admLoggedIn = false;
+let newImg = null;
+
+function doLogin(){
+  if(document.getElementById('adm-pass').value === ADM_PASS){
+    admLoggedIn=true;
+    document.getElementById('adm-login').style.display='none';
+    document.getElementById('adm-dash').style.display='block';
+    renderAdmList();
   } else {
-    document.getElementById('admin-err').style.display='block';
+    document.getElementById('adm-err').style.display='block';
   }
 }
-function showPanel(id){
-  closeAllPanels();
-  if(id==='cart')renderCart();
-  if(id==='admin'){
-    if(adminLoggedIn){
-      document.getElementById('admin-login-screen').style.display='none';
-      document.getElementById('admin-dashboard').style.display='block';
-    } else {
-      document.getElementById('admin-login-screen').style.display='block';
-      document.getElementById('admin-dashboard').style.display='none';
-    }
-    renderAdminWatches();
-  }
-  const p=document.getElementById('panel-'+id);
-  if(p)p.classList.add('show');
+
+function aTab(tab,btn){
+  document.querySelectorAll('.atab').forEach(b=>b.classList.remove('act'));
+  btn.classList.add('act');
+  document.getElementById('adm-list').style.display=tab==='list'?'block':'none';
+  document.getElementById('adm-add').style.display=tab==='add'?'block':'none';
 }
-function switchAdminTab(tab,btn){
-  document.querySelectorAll('.atab').forEach(b=>b.classList.remove('active'));
-  btn.classList.add('active');
-  document.getElementById('atab-watches').style.display=tab==='watches'?'block':'none';
-  document.getElementById('atab-add').style.display=tab==='add'?'block':'none';
-}
-function renderAdminWatches(){
-  if(!adminLoggedIn)return;
-  const el=document.getElementById('admin-watch-list');
+
+function renderAdmList(){
+  const el=document.getElementById('adm-list');
   if(!el)return;
-  el.innerHTML=WATCHES.map((w,i)=>`
-    <div class="watch-edit-item">
+  el.innerHTML=WD.map((w,i)=>`
+    <div class="wei">
       <img src="${w.img}" alt="${w.name}"/>
       <div class="wei-info">
         <div class="wei-name">${w.name}</div>
-        <div class="wei-price">$${w.price.toLocaleString()} · ${w.cat==='Sport'?'رياضي':'كلاسيك'}</div>
+        <div class="wei-sub">${fmt(w.price)} · ${w.cat}</div>
       </div>
       <div class="wei-btns">
-        <button class="wei-btn" onclick="editWatch(${i})">تعديل</button>
-        <button class="wei-btn del" onclick="deleteWatch(${i})">حذف</button>
+        <button class="wei-btn" onclick="editW(${i})">تعديل</button>
+        <button class="wei-btn del" onclick="delW(${i})">حذف</button>
       </div>
-    </div>
-  `).join('');
+    </div>`).join('');
 }
-function deleteWatch(i){
-  if(!confirm('حذف '+WATCHES[i].name+'؟'))return;
-  WATCHES.splice(i,1);saveWatches();buildGrid();renderAdminWatches();showToast('✓ تم الحذف');
+function delW(i){
+  if(!confirm('حذف '+WD[i].name+'؟'))return;
+  WD.splice(i,1); saveWD(); buildGrid(); renderAdmList(); toast('✓ تم الحذف');
 }
-function editWatch(i){
-  const w=WATCHES[i];
-  const newName=prompt('اسم الساعة:',w.name);if(newName===null)return;
-  const newPrice=prompt('السعر ($):',w.price);if(newPrice===null)return;
-  WATCHES[i].name=newName||w.name;
-  WATCHES[i].price=parseInt(newPrice)||w.price;
-  saveWatches();buildGrid();renderAdminWatches();showToast('✓ تم التعديل');
+function editW(i){
+  const w=WD[i];
+  const nm=prompt('الاسم:',w.name); if(nm===null)return;
+  const pr=prompt('السعر (دينار):',w.price); if(pr===null)return;
+  WD[i].name=nm||w.name;
+  WD[i].price=parseInt(pr)||w.price;
+  saveWD(); buildGrid(); renderAdmList(); toast('✓ تم التعديل');
 }
 
-/* ── Add new watch with bg removal ── */
-
-/* ══ IMAGE UPLOAD + AI RECOGNITION ══ */
-let newImgData = null;
-let aiProcessing = false;
-
-function handleImgUpload(input){
-  const file = input.files[0]; if(!file) return;
-  const reader = new FileReader();
-  reader.onload = e => { processWatchImage(e.target.result); };
+/* ══ UPLOAD + AI ══ */
+function handleUpload(input){
+  const file=input.files[0]; if(!file)return;
+  const reader=new FileReader();
+  reader.onload=e=>analyzeWatch(e.target.result);
   reader.readAsDataURL(file);
 }
 
-async function processWatchImage(dataUrl){
-  if(aiProcessing) return;
-  aiProcessing = true;
-
-  // Show loading
-  document.getElementById('upload-idle').style.display = 'none';
-  document.getElementById('upload-result').style.display = 'none';
-  document.getElementById('upload-loading').style.display = 'block';
-  document.getElementById('ai-status').textContent = 'جارٍ التعرف على الساعة...';
+async function analyzeWatch(dataUrl){
+  document.getElementById('u-idle').style.display='none';
+  document.getElementById('u-done').style.display='none';
+  document.getElementById('u-loading').style.display='flex';
+  document.getElementById('u-loading').style.flexDirection='column';
+  document.getElementById('u-loading').style.alignItems='center';
 
   try {
-    // Step 1: Ask Claude to identify the watch
-    const base64 = dataUrl.split(',')[1];
-    document.getElementById('ai-status').textContent = 'الذكاء الاصطناعي يحلل الصورة...';
-
-    const resp = await fetch('https://api.anthropic.com/v1/messages', {
-      method: 'POST',
-      headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 200,
-        messages: [{
-          role: 'user',
-          content: [
-            { type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data: base64 }},
-            { type: 'text', text: 'What is the exact model name of this watch? Reply with ONLY the brand and model name in English, nothing else. Example: "Rolex Submariner 116610LN" or "Audemars Piguet Royal Oak 15500ST"' }
-          ]
-        }]
+    document.getElementById('u-status').textContent='الذكاء الاصطناعي يحلل الصورة...';
+    const b64=dataUrl.split(',')[1];
+    const res=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',max_tokens:120,
+        messages:[{role:'user',content:[
+          {type:'image',source:{type:'base64',media_type:'image/jpeg',data:b64}},
+          {type:'text',text:'Identify this watch. Reply with ONLY: Brand + Model name in English. Max 8 words.'}
+        ]}]
       })
     });
+    const d=await res.json();
+    const detected=(d.content?.[0]?.text||'').trim();
+    if(detected && !document.getElementById('n-name').value)
+      document.getElementById('n-name').value=detected;
+    document.getElementById('u-status').textContent='إزالة الخلفية...';
+  } catch(e){}
 
-    const data = await resp.json();
-    const watchName = data.content?.[0]?.text?.trim() || '';
-    document.getElementById('ai-status').textContent = 'تم التعرف: ' + watchName;
-
-    // Step 2: Fetch clean image from Google Images via search
-    document.getElementById('ai-status').textContent = 'جارٍ جلب صورة احترافية...';
-
-    // Use a proxy/search to get clean watch image
-    // We'll use removebg-style canvas processing on uploaded image + fill name
-    const cleanImg = await removeBgAdvanced(dataUrl);
-
-    // Auto fill name field
-    if(watchName && !document.getElementById('new-name').value){
-      // Translate common brands to Arabic or keep English
-      document.getElementById('new-name').value = watchName;
-    }
-
-    newImgData = cleanImg;
-    const prev = document.getElementById('img-preview');
-    prev.src = cleanImg;
-    document.getElementById('ai-detected').textContent = '✓ ' + watchName;
-    document.getElementById('upload-loading').style.display = 'none';
-    document.getElementById('upload-result').style.display = 'block';
-
-  } catch(err) {
-    console.error(err);
-    // Fallback: just remove bg from uploaded image
-    document.getElementById('ai-status').textContent = 'إزالة الخلفية...';
-    removeBgAdvanced(dataUrl).then(clean => {
-      newImgData = clean;
-      const prev = document.getElementById('img-preview');
-      prev.src = clean;
-      document.getElementById('ai-detected').textContent = '✓ تم تنظيف الصورة';
-      document.getElementById('upload-loading').style.display = 'none';
-      document.getElementById('upload-result').style.display = 'block';
-    });
-  }
-  aiProcessing = false;
+  const clean=await removeBg(dataUrl);
+  newImg=clean;
+  document.getElementById('u-loading').style.display='none';
+  document.getElementById('u-done').style.display='block';
+  document.getElementById('u-preview').src=clean;
+  document.getElementById('u-detected').textContent='✓ جاهزة للإضافة';
 }
 
-function removeBgAdvanced(dataUrl){
-  return new Promise(resolve => {
-    const img = new Image();
-    img.onload = () => {
-      const SIZE = 400;
-      const canvas = document.createElement('canvas');
-      canvas.width = SIZE; canvas.height = SIZE;
-      const ctx = canvas.getContext('2d');
-
-      // Draw scaled
-      const scale = Math.min(SIZE/img.width, SIZE/img.height) * 0.85;
-      const w = img.width * scale, h = img.height * scale;
-      const ox = (SIZE - w) / 2, oy = (SIZE - h) / 2;
-      ctx.drawImage(img, ox, oy, w, h);
-
-      const d = ctx.getImageData(0,0,SIZE,SIZE);
-      const px = d.data;
-
-      // Sample corner colors for background detection
-      const samples = [];
-      [[5,5],[SIZE-5,5],[5,SIZE-5],[SIZE-5,SIZE-5],[SIZE/2,5],[5,SIZE/2]].forEach(([x,y])=>{
-        const i = (Math.round(y)*SIZE + Math.round(x))*4;
-        samples.push([px[i],px[i+1],px[i+2]]);
+function removeBg(dataUrl){
+  return new Promise(res=>{
+    const img=new Image();
+    img.onload=()=>{
+      const SZ=420;
+      const cv=document.createElement('canvas');
+      cv.width=SZ;cv.height=SZ;
+      const ctx=cv.getContext('2d');
+      const sc=Math.min(SZ/img.width,SZ/img.height)*0.82;
+      const w=img.width*sc,h=img.height*sc;
+      ctx.drawImage(img,(SZ-w)/2,(SZ-h)/2,w,h);
+      const d=ctx.getImageData(0,0,SZ,SZ);
+      const px=d.data;
+      // Sample background from corners
+      const corners=[[4,4],[SZ-4,4],[4,SZ-4],[SZ-4,SZ-4],[SZ/2,3]];
+      let ar=0,ag=0,ab=0;
+      corners.forEach(([x,y])=>{
+        const i=(Math.round(y)*SZ+Math.round(x))*4;
+        ar+=px[i];ag+=px[i+1];ab+=px[i+2];
       });
-      const avgR = samples.reduce((s,c)=>s+c[0],0)/samples.length;
-      const avgG = samples.reduce((s,c)=>s+c[1],0)/samples.length;
-      const avgB = samples.reduce((s,c)=>s+c[2],0)/samples.length;
-
-      // Remove pixels similar to background color
+      ar/=corners.length;ag/=corners.length;ab/=corners.length;
       for(let i=0;i<px.length;i+=4){
         const r=px[i],g=px[i+1],b=px[i+2];
-        const diff = Math.abs(r-avgR)+Math.abs(g-avgG)+Math.abs(b-avgB);
-        const brightness = (r+g+b)/3;
-
-        // Remove if: similar to bg corner OR very bright (white/light grey)
-        if(diff < 40 || brightness > 238){
-          const fade = Math.max(0, Math.min(1, (diff < 40 ? diff/40 : (255-brightness)/20)));
-          px[i+3] = Math.round(fade * px[i+3]);
+        const diff=Math.abs(r-ar)+Math.abs(g-ag)+Math.abs(b-ab);
+        const br=(r+g+b)/3;
+        if(diff<50||br>235){
+          const f=Math.max(0,Math.min(1,diff<50?diff/50:(255-br)/18));
+          px[i+3]=Math.round(f*px[i+3]);
         }
       }
-
-      // Feather edges
-      const edge = 12;
-      for(let y=0;y<SIZE;y++){
-        for(let x=0;x<SIZE;x++){
-          const ex = Math.min(x, SIZE-1-x, edge) / edge;
-          const ey = Math.min(y, SIZE-1-y, edge) / edge;
-          const fade = Math.min(ex, ey);
-          if(fade < 1){
-            const idx = (y*SIZE+x)*4;
-            px[idx+3] = Math.round(px[idx+3]*fade);
-          }
-        }
-      }
-
       ctx.putImageData(d,0,0);
-      resolve(canvas.toDataURL('image/png'));
+      res(cv.toDataURL('image/png'));
     };
-    img.src = dataUrl;
+    img.src=dataUrl;
   });
 }
 
-function addNewWatch(){
-  const name = document.getElementById('new-name').value.trim();
-  const price = parseInt(document.getElementById('new-price').value);
-  const cat = document.getElementById('new-cat').value;
-  if(!name || !price){ showToast('⚠️ أكمل اسم الساعة والسعر'); return; }
-  if(!newImgData){ showToast('⚠️ ارفع صورة أولاً'); return; }
-
-  const newId = Date.now();
-  WATCHES.push({id:newId, name, price, img:newImgData, cat});
-  saveWatches(); buildGrid(); renderAdminWatches();
-
-  // Reset
-  document.getElementById('new-name').value = '';
-  document.getElementById('new-price').value = '';
-  document.getElementById('upload-idle').style.display = 'block';
-  document.getElementById('upload-result').style.display = 'none';
-  document.getElementById('upload-loading').style.display = 'none';
-  document.getElementById('img-upload').value = '';
-  newImgData = null;
-  switchAdminTab('watches', document.querySelectorAll('.atab')[0]);
-  showToast('✓ أضيفت: ' + name);
+function addWatch(){
+  const name=document.getElementById('n-name').value.trim();
+  const price=parseInt(document.getElementById('n-price').value);
+  const cat=document.getElementById('n-cat').value;
+  if(!name||!price){toast('⚠️ أكمل اسم الساعة والسعر');return;}
+  if(!newImg){toast('⚠️ ارفع صورة أولاً');return;}
+  WD.push({id:Date.now(),name,price,img:newImg,cat});
+  saveWD();buildGrid();renderAdmList();updateBrandBtns();
+  // reset
+  document.getElementById('n-name').value='';
+  document.getElementById('n-price').value='';
+  document.getElementById('u-idle').style.display='block';
+  document.getElementById('u-done').style.display='none';
+  document.getElementById('ufile').value='';
+  newImg=null;
+  aTab('list',document.querySelectorAll('.atab')[0]);
+  toast('✓ أضيفت: '+name);
 }
 
 /* ══ TOAST ══ */
-let toastTimer;
-function showToast(msg){
-  clearTimeout(toastTimer);
-  const t=document.getElementById('toast');
-  t.textContent=msg;t.classList.add('show');
-  toastTimer=setTimeout(()=>t.classList.remove('show'),2600);
+let tt;
+function toast(msg){
+  clearTimeout(tt);const el=document.getElementById('toast');
+  el.textContent=msg;el.classList.add('show');
+  tt=setTimeout(()=>el.classList.remove('show'),2600);
 }
 
 /* ══ PWA ══ */
-let deferredPrompt=null;
+let dpr=null;
 window.addEventListener('beforeinstallprompt',e=>{
-  e.preventDefault();deferredPrompt=e;
-  if(!localStorage.getItem('zone-pwa-ok'))
-    setTimeout(()=>document.getElementById('install-banner').classList.add('show'),4000);
+  e.preventDefault();dpr=e;
+  if(!localStorage.getItem('zpwa'))
+    setTimeout(()=>document.getElementById('pwa-banner').classList.add('show'),4000);
 });
-document.getElementById('install-btn').addEventListener('click',async()=>{
-  if(!deferredPrompt)return;
-  deferredPrompt.prompt();
-  const{outcome}=await deferredPrompt.userChoice;
-  if(outcome==='accepted'){localStorage.setItem('zone-pwa-ok','1');showToast('✓ تم التثبيت!');}
-  deferredPrompt=null;
-  document.getElementById('install-banner').classList.remove('show');
-});
-function dismissInstall(){
-  document.getElementById('install-banner').classList.remove('show');
-  localStorage.setItem('zone-pwa-ok','dismissed');
-}
+document.getElementById('pwa-install-btn').onclick=async()=>{
+  if(!dpr)return;dpr.prompt();
+  const{outcome}=await dpr.userChoice;
+  if(outcome==='accepted'){localStorage.setItem('zpwa','1');toast('✓ تم التثبيت!');}
+  dpr=null;document.getElementById('pwa-banner').classList.remove('show');
+};
+function dismissPWA(){document.getElementById('pwa-banner').classList.remove('show');localStorage.setItem('zpwa','d');}
 
 /* ══ RESIZE ══ */
-let resizeTimer;
-window.addEventListener('resize',()=>{clearTimeout(resizeTimer);resizeTimer=setTimeout(buildGrid,300);});
+let rt;window.addEventListener('resize',()=>{clearTimeout(rt);rt=setTimeout(buildGrid,280);});
 
 buildGrid();
-updateFilterVisibility();
 </script>
 </body>
 </html>
