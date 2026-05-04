@@ -879,32 +879,90 @@ function removeBg(dataUrl){
   return new Promise(res=>{
     const img=new Image();
     img.onload=()=>{
-      const SZ=420;
+      const SZ=500;
       const cv=document.createElement('canvas');
-      cv.width=SZ;cv.height=SZ;
+      cv.width=SZ; cv.height=SZ;
       const ctx=cv.getContext('2d');
-      const sc=Math.min(SZ/img.width,SZ/img.height)*0.82;
-      const w=img.width*sc,h=img.height*sc;
+      const sc=Math.min(SZ/img.width,SZ/img.height)*0.80;
+      const w=img.width*sc, h=img.height*sc;
       ctx.drawImage(img,(SZ-w)/2,(SZ-h)/2,w,h);
       const d=ctx.getImageData(0,0,SZ,SZ);
       const px=d.data;
-      // Sample background from corners
-      const corners=[[4,4],[SZ-4,4],[4,SZ-4],[SZ-4,SZ-4],[SZ/2,3]];
+
+      // Step 1: Sample many border pixels to detect background color
+      const border=[];
+      for(let x=0;x<SZ;x+=4){
+        border.push([x,0],[x,1],[x,2],[x,SZ-1],[x,SZ-2]);
+      }
+      for(let y=0;y<SZ;y+=4){
+        border.push([0,y],[1,y],[2,y],[SZ-1,y],[SZ-2,y]);
+      }
       let ar=0,ag=0,ab=0;
-      corners.forEach(([x,y])=>{
-        const i=(Math.round(y)*SZ+Math.round(x))*4;
-        ar+=px[i];ag+=px[i+1];ab+=px[i+2];
+      border.forEach(([x,y])=>{
+        const i=(y*SZ+x)*4;
+        ar+=px[i]; ag+=px[i+1]; ab+=px[i+2];
       });
-      ar/=corners.length;ag/=corners.length;ab/=corners.length;
-      for(let i=0;i<px.length;i+=4){
-        const r=px[i],g=px[i+1],b=px[i+2];
-        const diff=Math.abs(r-ar)+Math.abs(g-ag)+Math.abs(b-ab);
+      ar/=border.length; ag/=border.length; ab/=border.length;
+
+      // Step 2: Flood-fill BFS from corners to find background region
+      const visited=new Uint8Array(SZ*SZ);
+      const bgMask=new Uint8Array(SZ*SZ);
+      const queue=[];
+      const THRESH=42;
+
+      function colorClose(i,r,g,b){
+        return Math.abs(px[i]-r)+Math.abs(px[i+1]-g)+Math.abs(px[i+2]-b)<THRESH*3;
+      }
+      // Seed from all 4 corners
+      [[0,0],[SZ-1,0],[0,SZ-1],[SZ-1,SZ-1],[SZ>>1,0],[0,SZ>>1],[SZ-1,SZ>>1],[SZ>>1,SZ-1]].forEach(([x,y])=>{
+        const idx=y*SZ+x;
+        if(!visited[idx]){visited[idx]=1;queue.push(idx);}
+      });
+
+      while(queue.length){
+        const idx=queue.pop();
+        const x=idx%SZ, y=(idx/SZ)|0;
+        const pi=idx*4;
+        if(!colorClose(pi,ar,ag,ab)) continue;
+        bgMask[idx]=1;
+        [[1,0],[-1,0],[0,1],[0,-1]].forEach(([dx,dy])=>{
+          const nx=x+dx,ny=y+dy;
+          if(nx<0||nx>=SZ||ny<0||ny>=SZ)return;
+          const ni=ny*SZ+nx;
+          if(!visited[ni]){visited[ni]=1;queue.push(ni);}
+        });
+      }
+
+      // Step 3: Apply alpha — bg pixels transparent, also kill bright near-white
+      for(let i=0;i<SZ*SZ;i++){
+        const pi=i*4;
+        const r=px[pi],g=px[pi+1],b=px[pi+2];
         const br=(r+g+b)/3;
-        if(diff<50||br>235){
-          const f=Math.max(0,Math.min(1,diff<50?diff/50:(255-br)/18));
-          px[i+3]=Math.round(f*px[i+3]);
+        if(bgMask[i]){
+          // Flood-fill bg: fully transparent with smooth edge
+          px[pi+3]=0;
+        } else if(br>242){
+          // Very bright pixels near white → transparent
+          px[pi+3]=Math.round((255-br)*4);
+        } else if(br>228){
+          // Light grey → semi-transparent
+          const f=(255-br)/27;
+          px[pi+3]=Math.round(f*f*255);
         }
       }
+
+      // Step 4: Feather edges 6px
+      const tmp=new Uint8Array(SZ*SZ*4);
+      for(let i=0;i<px.length;i++) tmp[i]=px[i];
+      for(let y=0;y<SZ;y++){
+        for(let x=0;x<SZ;x++){
+          const pi=(y*SZ+x)*4;
+          if(tmp[pi+3]===0) continue;
+          const ed=Math.min(x,SZ-1-x,y,SZ-1-y,6)/6;
+          if(ed<1) px[pi+3]=Math.round(tmp[pi+3]*ed*ed);
+        }
+      }
+
       ctx.putImageData(d,0,0);
       res(cv.toDataURL('image/png'));
     };
