@@ -841,38 +841,126 @@ function handleUpload(input){
 }
 
 async function analyzeWatch(dataUrl){
+  // Show loading
   document.getElementById('u-idle').style.display='none';
   document.getElementById('u-done').style.display='none';
-  document.getElementById('u-loading').style.display='flex';
-  document.getElementById('u-loading').style.flexDirection='column';
-  document.getElementById('u-loading').style.alignItems='center';
+  const ld=document.getElementById('u-loading');
+  ld.style.cssText='display:flex;flex-direction:column;align-items:center;gap:6px;';
+
+  const setStatus = t => { document.getElementById('u-status').textContent=t; };
 
   try {
-    document.getElementById('u-status').textContent='الذكاء الاصطناعي يحلل الصورة...';
-    const b64=dataUrl.split(',')[1];
-    const res=await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST',headers:{'Content-Type':'application/json'},
-      body:JSON.stringify({
-        model:'claude-sonnet-4-20250514',max_tokens:120,
-        messages:[{role:'user',content:[
-          {type:'image',source:{type:'base64',media_type:'image/jpeg',data:b64}},
-          {type:'text',text:'Identify this watch. Reply with ONLY: Brand + Model name in English. Max 8 words.'}
+    // Step 1: Identify the watch model using Claude Vision
+    setStatus('🔍 الذكاء الاصطناعي يحلل الصورة...');
+    const b64 = dataUrl.split(',')[1];
+    const aiRes = await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        model:'claude-sonnet-4-20250514', max_tokens:200,
+        messages:[{role:'user', content:[
+          {type:'image', source:{type:'base64', media_type:'image/jpeg', data:b64}},
+          {type:'text', text:`You are a luxury watch expert. Look at this watch image carefully.
+Reply with ONLY a JSON object in this exact format (no markdown, no explanation):
+{"brand":"Rolex","model":"Submariner 116610LN","searchQuery":"Rolex Submariner 116610LN official press photo white background"}
+The searchQuery should find the official clean press/marketing photo of this exact watch.`}
         ]}]
       })
     });
-    const d=await res.json();
-    const detected=(d.content?.[0]?.text||'').trim();
-    if(detected && !document.getElementById('n-name').value)
-      document.getElementById('n-name').value=detected;
-    document.getElementById('u-status').textContent='إزالة الخلفية...';
-  } catch(e){}
+    const aiData = await aiRes.json();
+    let watchInfo = {brand:'Unknown', model:'Watch', searchQuery:''};
+    try {
+      const txt = (aiData.content?.[0]?.text||'{}').trim();
+      watchInfo = JSON.parse(txt);
+    } catch(e){}
 
-  const clean=await removeBg(dataUrl);
-  newImg=clean;
-  document.getElementById('u-loading').style.display='none';
-  document.getElementById('u-done').style.display='block';
-  document.getElementById('u-preview').src=clean;
-  document.getElementById('u-detected').textContent='✓ جاهزة للإضافة';
+    const fullName = (watchInfo.brand+' '+watchInfo.model).trim();
+    setStatus('✓ تم التعرف: ' + fullName);
+    if(fullName && fullName!=='Unknown Watch' && !document.getElementById('n-name').value){
+      document.getElementById('n-name').value = fullName;
+    }
+
+    // Step 2: Try to fetch official clean image via search
+    setStatus('🌐 جارٍ جلب الصورة الرسمية...');
+    const officialImg = await fetchOfficialImage(watchInfo.searchQuery || fullName, b64, dataUrl);
+
+    newImg = officialImg;
+    ld.style.display='none';
+    document.getElementById('u-done').style.display='block';
+    document.getElementById('u-preview').src=officialImg;
+    document.getElementById('u-detected').textContent='✓ ' + fullName;
+
+  } catch(err){
+    console.error(err);
+    setStatus('⚡ تنظيف الصورة...');
+    try {
+      const clean = await removeBg(dataUrl);
+      newImg=clean;
+      ld.style.display='none';
+      document.getElementById('u-done').style.display='block';
+      document.getElementById('u-preview').src=clean;
+      document.getElementById('u-detected').textContent='✓ جاهزة للإضافة';
+    } catch(e2){
+      newImg=dataUrl;
+      ld.style.display='none';
+      document.getElementById('u-done').style.display='block';
+      document.getElementById('u-preview').src=dataUrl;
+    }
+  }
+}
+
+async function fetchOfficialImage(query, originalB64, fallbackDataUrl){
+  // Use Claude to search and get official watch image URL
+  try {
+    const searchRes = await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        model:'claude-sonnet-4-20250514', max_tokens:400,
+        tools:[{type:'web_search_20250305', name:'web_search'}],
+        messages:[{role:'user', content:
+          `Search for the official product image of: ${query}
+          Find an image URL that shows the watch on a clean white or transparent background (official press photo or e-commerce product photo).
+          Reply with ONLY the direct image URL (.jpg or .png), nothing else. Must be a real working URL.`
+        }]
+      })
+    });
+    const sd = await searchRes.json();
+    // Extract URL from response
+    const text = (sd.content||[]).map(b=>b.type==='text'?b.text:'').join('');
+    const urlMatch = text.match(/https?:\/\/[^\s"'<>]+\.(?:jpg|jpeg|png|webp)/i);
+    if(urlMatch){
+      // Try to load the image
+      const imgUrl = urlMatch[0];
+      const loaded = await loadImageFromUrl(imgUrl);
+      if(loaded) {
+        // Remove bg from the official image
+        document.getElementById('u-status').textContent='✨ إزالة الخلفية من الصورة الرسمية...';
+        return await removeBg(loaded);
+      }
+    }
+  } catch(e){ console.log('search failed, using uploaded image'); }
+
+  // Fallback: use original uploaded image with bg removal
+  document.getElementById('u-status').textContent='✨ إزالة الخلفية...';
+  return await removeBg(fallbackDataUrl);
+}
+
+function loadImageFromUrl(url){
+  return new Promise(res=>{
+    const img=new Image();
+    img.crossOrigin='anonymous';
+    img.onload=()=>{
+      try {
+        const cv=document.createElement('canvas');
+        cv.width=img.naturalWidth; cv.height=img.naturalHeight;
+        const ctx=cv.getContext('2d');
+        ctx.drawImage(img,0,0);
+        res(cv.toDataURL('image/jpeg',0.9));
+      } catch(e){ res(null); }
+    };
+    img.onerror=()=>res(null);
+    img.src=url+'?t='+Date.now();
+    setTimeout(()=>res(null), 8000);
+  });
 }
 
 function removeBg(dataUrl){
