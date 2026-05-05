@@ -277,6 +277,16 @@ header{
 @keyframes spinA{to{transform:rotate(360deg)}}
 .adm-row{display:flex;gap:10px;}
 .adm-row .fg{flex:1;}
+.search-card{
+  border:2px solid var(--border);border-radius:6px;padding:6px;
+  cursor:pointer;transition:all .2s;background:var(--bg);
+  display:flex;align-items:center;justify-content:center;
+  aspect-ratio:1;overflow:hidden;position:relative;
+}
+.search-card:hover{border-color:var(--text);transform:scale(1.04);}
+.search-card.selected{border-color:var(--dark);box-shadow:0 0 0 2px var(--dark);}
+.search-card img{width:100%;height:100%;object-fit:contain;}
+.search-card .sc-load{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:var(--bg);}
 .adm-save{width:100%;padding:11px;background:var(--dark);color:var(--bg);
   border:none;border-radius:3px;font-size:9px;font-weight:700;
   letter-spacing:.16em;text-transform:uppercase;cursor:pointer;
@@ -473,9 +483,30 @@ header{
 
       <!-- Add -->
       <div id="adm-add" style="display:none">
+        <!-- Search by name -->
+        <div style="display:flex;gap:8px;margin-bottom:12px;">
+          <input type="text" id="search-name" placeholder="ابحث باسم الساعة... مثال: Rolex Submariner"
+            style="flex:1;padding:10px 13px;background:var(--bg);border:1px solid var(--border);border-radius:3px;font-size:12px;color:var(--text);font-family:inherit;"
+            onkeydown="if(event.key==='Enter')searchWatchImages()"/>
+          <button onclick="searchWatchImages()" style="padding:10px 16px;background:var(--dark);color:var(--bg);border:none;border-radius:3px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;">🔍 بحث</button>
+        </div>
+
+        <!-- Image search results grid -->
+        <div id="search-results" style="display:none;margin-bottom:12px;">
+          <p style="font-size:9px;letter-spacing:.15em;text-transform:uppercase;color:var(--text2);margin-bottom:8px;">اختر الصورة المناسبة</p>
+          <div id="search-grid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;"></div>
+        </div>
+
+        <!-- OR upload -->
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+          <div style="flex:1;height:1px;background:var(--border);"></div>
+          <span style="font-size:10px;color:var(--text2);">أو ارفع صورة</span>
+          <div style="flex:1;height:1px;background:var(--border);"></div>
+        </div>
+
         <div class="upload-box" id="ubox" onclick="document.getElementById('ufile').click()">
-          <div id="u-idle"><p style="font-size:20px">📸</p><p>اضغط لرفع صورة الساعة</p><p class="sub">الذكاء الاصطناعي سيتعرف عليها تلقائياً</p></div>
-          <div id="u-loading" style="display:none"><div class="spin"></div><p id="u-status" style="font-size:10px;color:var(--text2);margin-top:8px">جارٍ التحليل...</p></div>
+          <div id="u-idle"><p style="font-size:20px">📸</p><p>اضغط لرفع صورة</p><p class="sub">سيتم إزالة الخلفية تلقائياً</p></div>
+          <div id="u-loading" style="display:none;flex-direction:column;align-items:center;gap:6px;"><div class="spin"></div><p id="u-status" style="font-size:10px;color:var(--text2);">جارٍ التحليل...</p></div>
           <div id="u-done" style="display:none;text-align:center">
             <img id="u-preview" style="max-width:110px;max-height:110px;filter:drop-shadow(0 4px 16px rgba(0,0,0,0.15));" alt=""/>
             <p id="u-detected" style="font-size:10px;color:var(--text2);margin-top:6px;"></p>
@@ -841,220 +872,308 @@ function handleUpload(input){
 }
 
 async function analyzeWatch(dataUrl){
-  // Show loading
   document.getElementById('u-idle').style.display='none';
   document.getElementById('u-done').style.display='none';
   const ld=document.getElementById('u-loading');
   ld.style.cssText='display:flex;flex-direction:column;align-items:center;gap:6px;';
+  const setS=t=>document.getElementById('u-status').textContent=t;
 
-  const setStatus = t => { document.getElementById('u-status').textContent=t; };
+  setS('🔍 التعرف على الساعة...');
 
-  try {
-    // Step 1: Identify the watch model using Claude Vision
-    setStatus('🔍 الذكاء الاصطناعي يحلل الصورة...');
-    const b64 = dataUrl.split(',')[1];
-    const aiRes = await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({
-        model:'claude-sonnet-4-20250514', max_tokens:200,
-        messages:[{role:'user', content:[
-          {type:'image', source:{type:'base64', media_type:'image/jpeg', data:b64}},
-          {type:'text', text:`You are a luxury watch expert. Look at this watch image carefully.
-Reply with ONLY a JSON object in this exact format (no markdown, no explanation):
-{"brand":"Rolex","model":"Submariner 116610LN","searchQuery":"Rolex Submariner 116610LN official press photo white background"}
-The searchQuery should find the official clean press/marketing photo of this exact watch.`}
+  // Step 1: Identify watch with Claude Vision
+  let watchName='';
+  try{
+    const b64=dataUrl.split(',')[1];
+    const mime=dataUrl.split(';')[0].split(':')[1]||'image/jpeg';
+    const r=await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST',headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({
+        model:'claude-sonnet-4-20250514',max_tokens:60,
+        messages:[{role:'user',content:[
+          {type:'image',source:{type:'base64',media_type:mime,data:b64}},
+          {type:'text',text:'What watch is this? Reply with brand and model only in English, max 6 words, nothing else.'}
         ]}]
       })
     });
-    const aiData = await aiRes.json();
-    let watchInfo = {brand:'Unknown', model:'Watch', searchQuery:''};
-    try {
-      const txt = (aiData.content?.[0]?.text||'{}').trim();
-      watchInfo = JSON.parse(txt);
-    } catch(e){}
+    const j=await r.json();
+    watchName=(j.content?.[0]?.text||'').trim().replace(/[*_.]/g,'');
+    if(watchName && !document.getElementById('n-name').value)
+      document.getElementById('n-name').value=watchName;
+    setS('✓ '+watchName);
+  }catch(e){ setS('جارٍ تنظيف الصورة...'); }
 
-    const fullName = (watchInfo.brand+' '+watchInfo.model).trim();
-    setStatus('✓ تم التعرف: ' + fullName);
-    if(fullName && fullName!=='Unknown Watch' && !document.getElementById('n-name').value){
-      document.getElementById('n-name').value = fullName;
-    }
-
-    // Step 2: Try to fetch official clean image via search
-    setStatus('🌐 جارٍ جلب الصورة الرسمية...');
-    const officialImg = await fetchOfficialImage(watchInfo.searchQuery || fullName, b64, dataUrl);
-
-    newImg = officialImg;
-    ld.style.display='none';
-    document.getElementById('u-done').style.display='block';
-    document.getElementById('u-preview').src=officialImg;
-    document.getElementById('u-detected').textContent='✓ ' + fullName;
-
-  } catch(err){
-    console.error(err);
-    setStatus('⚡ تنظيف الصورة...');
-    try {
-      const clean = await removeBg(dataUrl);
-      newImg=clean;
-      ld.style.display='none';
-      document.getElementById('u-done').style.display='block';
-      document.getElementById('u-preview').src=clean;
-      document.getElementById('u-detected').textContent='✓ جاهزة للإضافة';
-    } catch(e2){
-      newImg=dataUrl;
-      ld.style.display='none';
-      document.getElementById('u-done').style.display='block';
-      document.getElementById('u-preview').src=dataUrl;
-    }
-  }
+  // Step 2: Advanced background removal
+  setS('✨ إزالة الخلفية...');
+  const clean=await smartRemoveBg(dataUrl);
+  newImg=clean;
+  ld.style.display='none';
+  document.getElementById('u-done').style.display='block';
+  document.getElementById('u-preview').src=clean;
+  document.getElementById('u-detected').textContent= watchName? '✓ '+watchName : '✓ جاهزة';
 }
 
-async function fetchOfficialImage(query, originalB64, fallbackDataUrl){
-  // Use Claude to search and get official watch image URL
-  try {
-    const searchRes = await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({
-        model:'claude-sonnet-4-20250514', max_tokens:400,
-        tools:[{type:'web_search_20250305', name:'web_search'}],
-        messages:[{role:'user', content:
-          `Search for the official product image of: ${query}
-          Find an image URL that shows the watch on a clean white or transparent background (official press photo or e-commerce product photo).
-          Reply with ONLY the direct image URL (.jpg or .png), nothing else. Must be a real working URL.`
-        }]
-      })
-    });
-    const sd = await searchRes.json();
-    // Extract URL from response
-    const text = (sd.content||[]).map(b=>b.type==='text'?b.text:'').join('');
-    const urlMatch = text.match(/https?:\/\/[^\s"'<>]+\.(?:jpg|jpeg|png|webp)/i);
-    if(urlMatch){
-      // Try to load the image
-      const imgUrl = urlMatch[0];
-      const loaded = await loadImageFromUrl(imgUrl);
-      if(loaded) {
-        // Remove bg from the official image
-        document.getElementById('u-status').textContent='✨ إزالة الخلفية من الصورة الرسمية...';
-        return await removeBg(loaded);
-      }
-    }
-  } catch(e){ console.log('search failed, using uploaded image'); }
-
-  // Fallback: use original uploaded image with bg removal
-  document.getElementById('u-status').textContent='✨ إزالة الخلفية...';
-  return await removeBg(fallbackDataUrl);
-}
-
-function loadImageFromUrl(url){
-  return new Promise(res=>{
+// Smart background removal — works on any background color/texture
+function smartRemoveBg(dataUrl){
+  return new Promise(resolve=>{
     const img=new Image();
-    img.crossOrigin='anonymous';
     img.onload=()=>{
-      try {
-        const cv=document.createElement('canvas');
-        cv.width=img.naturalWidth; cv.height=img.naturalHeight;
-        const ctx=cv.getContext('2d');
-        ctx.drawImage(img,0,0);
-        res(cv.toDataURL('image/jpeg',0.9));
-      } catch(e){ res(null); }
+      const W=img.naturalWidth, H=img.naturalHeight;
+      // Work at full resolution
+      const cv=document.createElement('canvas');
+      cv.width=W; cv.height=H;
+      const ctx=cv.getContext('2d');
+      ctx.drawImage(img,0,0);
+      const imageData=ctx.getImageData(0,0,W,H);
+      const px=imageData.data;
+      const N=W*H;
+
+      // ── 1. Sample background color from many border pixels ──
+      const borderPts=[];
+      const step=3;
+      for(let x=0;x<W;x+=step){ borderPts.push(x,0); borderPts.push(x,H-1); borderPts.push(x,1); borderPts.push(x,H-2); }
+      for(let y=1;y<H-1;y+=step){ borderPts.push(0,y); borderPts.push(W-1,y); borderPts.push(1,y); borderPts.push(W-2,y); }
+      let rSum=0,gSum=0,bSum=0,cnt=0;
+      for(let i=0;i<borderPts.length;i+=2){
+        const pi=(borderPts[i+1]*W+borderPts[i])*4;
+        rSum+=px[pi]; gSum+=px[pi+1]; bSum+=px[pi+2]; cnt++;
+      }
+      const bgR=rSum/cnt, bgG=gSum/cnt, bgB=bSum/cnt;
+
+      // ── 2. BFS flood-fill from ALL border pixels ──
+      const alpha=new Float32Array(N).fill(1.0); // 1=opaque, 0=transparent
+      const visited=new Uint8Array(N);
+      const queue=new Int32Array(N*2);
+      let qHead=0, qTail=0;
+
+      const THR=38; // color distance threshold
+
+      function colorDist(pi){
+        const dr=px[pi]-bgR, dg=px[pi+1]-bgG, db=px[pi+2]-bgB;
+        return Math.sqrt(dr*dr+dg*dg+db*db);
+      }
+
+      // Seed all border pixels
+      for(let x=0;x<W;x++){
+        for(const y of [0,1,H-2,H-1]){
+          const idx=y*W+x;
+          if(!visited[idx]){ visited[idx]=1; queue[qTail*2]=x; queue[qTail*2+1]=y; qTail++; }
+        }
+      }
+      for(let y=0;y<H;y++){
+        for(const x of [0,1,W-2,W-1]){
+          const idx=y*W+x;
+          if(!visited[idx]){ visited[idx]=1; queue[qTail*2]=x; queue[qTail*2+1]=y; qTail++; }
+        }
+      }
+
+      // BFS
+      const dx4=[-1,1,0,0], dy4=[0,0,-1,1];
+      while(qHead<qTail){
+        const x=queue[qHead*2], y=queue[qHead*2+1]; qHead++;
+        const idx=y*W+x;
+        const pi=idx*4;
+        const d=colorDist(pi);
+        if(d>THR){ alpha[idx]=1.0; continue; } // watch pixel — keep
+        // Background pixel
+        const fade=Math.max(0,1-d/(THR*0.6));
+        alpha[idx]=fade*0.15; // near-transparent
+        for(let k=0;k<4;k++){
+          const nx=x+dx4[k], ny=y+dy4[k];
+          if(nx<0||nx>=W||ny<0||ny>=H) continue;
+          const ni=ny*W+nx;
+          if(!visited[ni]){ visited[ni]=1; queue[qTail*2]=nx; queue[qTail*2+1]=ny; qTail++; }
+        }
+      }
+
+      // ── 3. Also kill near-white pixels anywhere ──
+      for(let i=0;i<N;i++){
+        const pi=i*4;
+        const r=px[pi],g=px[pi+1],b=px[pi+2];
+        const bright=(r+g+b)/3;
+        const sat=Math.max(r,g,b)-Math.min(r,g,b);
+        // Very bright + low saturation = likely white/grey bg remnant
+        if(bright>240 && sat<18){
+          alpha[i]=Math.min(alpha[i],(255-bright)/14);
+        } else if(bright>230 && sat<12){
+          alpha[i]=Math.min(alpha[i],(255-bright)/22);
+        }
+      }
+
+      // ── 4. Smooth alpha with 1-pass blur ──
+      const smoothed=new Float32Array(N);
+      for(let y=0;y<H;y++){
+        for(let x=0;x<W;x++){
+          const i=y*W+x;
+          let s=0,n=0;
+          for(let dy=-1;dy<=1;dy++) for(let dx=-1;dx<=1;dx++){
+            const nx=x+dx,ny=y+dy;
+            if(nx<0||nx>=W||ny<0||ny>=H) continue;
+            s+=alpha[ny*W+nx]; n++;
+          }
+          smoothed[i]=s/n;
+        }
+      }
+
+      // ── 5. Apply alpha ──
+      for(let i=0;i<N;i++){
+        px[i*4+3]=Math.round(Math.min(alpha[i],smoothed[i]*1.1)*255);
+      }
+
+      // ── 6. Output centered at 500×500 ──
+      ctx.putImageData(imageData,0,0);
+      const out=document.createElement('canvas');
+      out.width=500; out.height=500;
+      const octx=out.getContext('2d');
+      const sc=Math.min(460/W,460/H);
+      const dw=W*sc, dh=H*sc;
+      octx.drawImage(cv,(500-dw)/2,(500-dh)/2,dw,dh);
+      resolve(out.toDataURL('image/png'));
     };
-    img.onerror=()=>res(null);
-    img.src=url+'?t='+Date.now();
-    setTimeout(()=>res(null), 8000);
+    img.onerror=()=>resolve(dataUrl);
+    img.src=dataUrl;
   });
 }
 
-function removeBg(dataUrl){
-  return new Promise(res=>{
-    const img=new Image();
-    img.onload=()=>{
-      const SZ=500;
-      const cv=document.createElement('canvas');
-      cv.width=SZ; cv.height=SZ;
-      const ctx=cv.getContext('2d');
-      const sc=Math.min(SZ/img.width,SZ/img.height)*0.80;
-      const w=img.width*sc, h=img.height*sc;
-      ctx.drawImage(img,(SZ-w)/2,(SZ-h)/2,w,h);
-      const d=ctx.getImageData(0,0,SZ,SZ);
-      const px=d.data;
+/* ══ SEARCH WATCH IMAGES BY NAME ══ */
+let searchResults = [];
+let selectedSearchImg = null;
 
-      // Step 1: Sample many border pixels to detect background color
-      const border=[];
-      for(let x=0;x<SZ;x+=4){
-        border.push([x,0],[x,1],[x,2],[x,SZ-1],[x,SZ-2]);
-      }
-      for(let y=0;y<SZ;y+=4){
-        border.push([0,y],[1,y],[2,y],[SZ-1,y],[SZ-2,y]);
-      }
-      let ar=0,ag=0,ab=0;
-      border.forEach(([x,y])=>{
-        const i=(y*SZ+x)*4;
-        ar+=px[i]; ag+=px[i+1]; ab+=px[i+2];
-      });
-      ar/=border.length; ag/=border.length; ab/=border.length;
+async function searchWatchImages(){
+  const query = document.getElementById('search-name').value.trim();
+  if(!query){ return; }
 
-      // Step 2: Flood-fill BFS from corners to find background region
-      const visited=new Uint8Array(SZ*SZ);
-      const bgMask=new Uint8Array(SZ*SZ);
-      const queue=[];
-      const THRESH=42;
+  // Auto-fill name field
+  if(!document.getElementById('n-name').value)
+    document.getElementById('n-name').value = query;
 
-      function colorClose(i,r,g,b){
-        return Math.abs(px[i]-r)+Math.abs(px[i+1]-g)+Math.abs(px[i+2]-b)<THRESH*3;
-      }
-      // Seed from all 4 corners
-      [[0,0],[SZ-1,0],[0,SZ-1],[SZ-1,SZ-1],[SZ>>1,0],[0,SZ>>1],[SZ-1,SZ>>1],[SZ>>1,SZ-1]].forEach(([x,y])=>{
-        const idx=y*SZ+x;
-        if(!visited[idx]){visited[idx]=1;queue.push(idx);}
-      });
+  const grid = document.getElementById('search-grid');
+  const resultsDiv = document.getElementById('search-results');
+  grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:20px;"><div class="spin" style="margin:0 auto"></div><p style="font-size:10px;color:var(--text2);margin-top:8px">جارٍ البحث...</p></div>';
+  resultsDiv.style.display = 'block';
 
-      while(queue.length){
-        const idx=queue.pop();
-        const x=idx%SZ, y=(idx/SZ)|0;
-        const pi=idx*4;
-        if(!colorClose(pi,ar,ag,ab)) continue;
-        bgMask[idx]=1;
-        [[1,0],[-1,0],[0,1],[0,-1]].forEach(([dx,dy])=>{
-          const nx=x+dx,ny=y+dy;
-          if(nx<0||nx>=SZ||ny<0||ny>=SZ)return;
-          const ni=ny*SZ+nx;
-          if(!visited[ni]){visited[ni]=1;queue.push(ni);}
-        });
-      }
+  try {
+    // Use Claude with web search to find watch images
+    const res = await fetch('https://api.anthropic.com/v1/messages',{
+      method:'POST', headers:{'Content-Type':'application/json'},
+      body: JSON.stringify({
+        model:'claude-sonnet-4-20250514', max_tokens:800,
+        tools:[{type:'web_search_20250305', name:'web_search'}],
+        messages:[{role:'user', content:
+          `Search for official product images of: ${query} luxury watch
+Search for "${query} watch official product photo white background site:rolex.com OR site:watchfinder.co.uk OR site:chronext.com OR site:bob's watches"
+Find 6 different direct image URLs (.jpg or .png or .webp) showing this watch from the front on clean/white background.
+Reply with ONLY a JSON array of 6 image URLs, no explanation:
+["url1","url2","url3","url4","url5","url6"]`
+        }]
+      })
+    });
+    const data = await res.json();
+    const text = (data.content||[]).map(b=>b.type==='text'?b.text:'').join('');
 
-      // Step 3: Apply alpha — bg pixels transparent, also kill bright near-white
-      for(let i=0;i<SZ*SZ;i++){
-        const pi=i*4;
-        const r=px[pi],g=px[pi+1],b=px[pi+2];
-        const br=(r+g+b)/3;
-        if(bgMask[i]){
-          // Flood-fill bg: fully transparent with smooth edge
-          px[pi+3]=0;
-        } else if(br>242){
-          // Very bright pixels near white → transparent
-          px[pi+3]=Math.round((255-br)*4);
-        } else if(br>228){
-          // Light grey → semi-transparent
-          const f=(255-br)/27;
-          px[pi+3]=Math.round(f*f*255);
-        }
-      }
+    // Extract JSON array of URLs
+    const match = text.match(/\[[\s\S]*?\]/);
+    let urls = [];
+    if(match){
+      try{ urls = JSON.parse(match[0]).filter(u=>typeof u==='string'&&u.startsWith('http')); }catch(e){}
+    }
 
-      // Step 4: Feather edges 6px
-      const tmp=new Uint8Array(SZ*SZ*4);
-      for(let i=0;i<px.length;i++) tmp[i]=px[i];
-      for(let y=0;y<SZ;y++){
-        for(let x=0;x<SZ;x++){
-          const pi=(y*SZ+x)*4;
-          if(tmp[pi+3]===0) continue;
-          const ed=Math.min(x,SZ-1-x,y,SZ-1-y,6)/6;
-          if(ed<1) px[pi+3]=Math.round(tmp[pi+3]*ed*ed);
-        }
-      }
+    if(!urls.length){
+      // Fallback: extract any image URLs from response
+      const urlMatches = text.matchAll(/https?:\/\/[^\s"'\]]+\.(?:jpg|jpeg|png|webp)/gi);
+      for(const m of urlMatches){ urls.push(m[0]); if(urls.length>=6) break; }
+    }
 
-      ctx.putImageData(d,0,0);
-      res(cv.toDataURL('image/png'));
+    if(urls.length){
+      renderSearchResults(urls, query);
+    } else {
+      grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:16px;color:var(--text2);font-size:12px;">لم يتم العثور على صور. جرب اسماً آخر أو ارفع صورة.</div>';
+    }
+  } catch(err){
+    console.error(err);
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:16px;color:var(--text2);font-size:12px;">تعذر البحث. ارفع صورة مباشرة.</div>';
+  }
+}
+
+function renderSearchResults(urls, query){
+  const grid = document.getElementById('search-grid');
+  grid.innerHTML = '';
+  searchResults = [];
+
+  urls.forEach((url, i)=>{
+    const card = document.createElement('div');
+    card.className = 'search-card';
+    card.innerHTML = `<div class="sc-load"><div class="spin" style="width:18px;height:18px;border-width:1.5px;"></div></div>`;
+
+    const img = document.createElement('img');
+    img.crossOrigin = 'anonymous';
+    img.style.cssText = 'display:none;width:100%;height:100%;object-fit:contain;';
+
+    img.onload = () => {
+      card.querySelector('.sc-load').remove();
+      img.style.display = 'block';
+      searchResults.push({url, idx:i});
     };
-    img.src=dataUrl;
+    img.onerror = () => { card.style.display='none'; };
+    img.src = url;
+
+    card.appendChild(img);
+    card.addEventListener('click', ()=> selectSearchImage(card, url));
+    grid.appendChild(card);
+  });
+}
+
+async function selectSearchImage(card, url){
+  // Mark selected
+  document.querySelectorAll('.search-card').forEach(c=>c.classList.remove('selected'));
+  card.classList.add('selected');
+  selectedSearchImg = url;
+
+  // Show processing state
+  document.getElementById('u-idle').style.display='none';
+  document.getElementById('u-done').style.display='none';
+  const ld = document.getElementById('u-loading');
+  ld.style.cssText='display:flex;flex-direction:column;align-items:center;gap:6px;';
+  document.getElementById('u-status').textContent='⬇️ جارٍ تحميل الصورة...';
+
+  try {
+    // Load image to canvas (handle CORS)
+    const dataUrl = await loadImgToDataUrl(url);
+    document.getElementById('u-status').textContent='✨ إزالة الخلفية...';
+    const clean = await smartRemoveBg(dataUrl);
+    newImg = clean;
+    ld.style.display='none';
+    document.getElementById('u-done').style.display='block';
+    document.getElementById('u-preview').src = clean;
+    document.getElementById('u-detected').textContent='✓ تم! يمكنك إضافة الساعة';
+  } catch(err){
+    console.error(err);
+    // Use URL directly if can't process
+    newImg = url;
+    ld.style.display='none';
+    document.getElementById('u-done').style.display='block';
+    document.getElementById('u-preview').src = url;
+    document.getElementById('u-detected').textContent='✓ تم اختيار الصورة';
+  }
+}
+
+function loadImgToDataUrl(url){
+  return new Promise((res,rej)=>{
+    const img = new Image();
+    img.crossOrigin='anonymous';
+    img.onload=()=>{
+      try{
+        const cv=document.createElement('canvas');
+        cv.width=img.naturalWidth; cv.height=img.naturalHeight;
+        cv.getContext('2d').drawImage(img,0,0);
+        res(cv.toDataURL('image/jpeg',0.95));
+      }catch(e){
+        // CORS blocked — use URL as-is
+        res(url);
+      }
+    };
+    img.onerror=()=>rej(new Error('load failed'));
+    setTimeout(()=>rej(new Error('timeout')),10000);
+    img.src=url+'?nocache='+Date.now();
   });
 }
 
@@ -1069,10 +1188,13 @@ function addWatch(){
   // reset
   document.getElementById('n-name').value='';
   document.getElementById('n-price').value='';
+  document.getElementById('search-name').value='';
+  document.getElementById('search-results').style.display='none';
+  document.getElementById('search-grid').innerHTML='';
   document.getElementById('u-idle').style.display='block';
   document.getElementById('u-done').style.display='none';
   document.getElementById('ufile').value='';
-  newImg=null;
+  newImg=null; selectedSearchImg=null;
   aTab('list',document.querySelectorAll('.atab')[0]);
   toast('✓ أضيفت: '+name);
 }
