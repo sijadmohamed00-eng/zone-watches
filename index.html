@@ -1040,9 +1040,8 @@ let selectedSearchImg = null;
 
 async function searchWatchImages(){
   const query = document.getElementById('search-name').value.trim();
-  if(!query){ return; }
+  if(!query) return;
 
-  // Auto-fill name field
   if(!document.getElementById('n-name').value)
     document.getElementById('n-name').value = query;
 
@@ -1051,47 +1050,95 @@ async function searchWatchImages(){
   grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:20px;"><div class="spin" style="margin:0 auto"></div><p style="font-size:10px;color:var(--text2);margin-top:8px">جارٍ البحث...</p></div>';
   resultsDiv.style.display = 'block';
 
+  // Use DuckDuckGo image search via public proxy — no CORS issues
+  const searches = [
+    `${query} watch official product white background`,
+    `${query} luxury watch front view transparent`,
+  ];
+
+  const urls = new Set();
+
+  // Method 1: Use known brand CDN patterns
+  const knownUrls = getKnownWatchUrls(query);
+  knownUrls.forEach(u=>urls.add(u));
+
+  // Method 2: Open Library / Wikipedia / brand sites via CORS proxy
   try {
-    // Use Claude with web search to find watch images
-    const res = await fetch('https://api.anthropic.com/v1/messages',{
-      method:'POST', headers:{'Content-Type':'application/json'},
-      body: JSON.stringify({
-        model:'claude-sonnet-4-20250514', max_tokens:800,
-        tools:[{type:'web_search_20250305', name:'web_search'}],
-        messages:[{role:'user', content:
-          `Search for official product images of: ${query} luxury watch
-Search for "${query} watch official product photo white background site:rolex.com OR site:watchfinder.co.uk OR site:chronext.com OR site:bob's watches"
-Find 6 different direct image URLs (.jpg or .png or .webp) showing this watch from the front on clean/white background.
-Reply with ONLY a JSON array of 6 image URLs, no explanation:
-["url1","url2","url3","url4","url5","url6"]`
-        }]
-      })
-    });
-    const data = await res.json();
-    const text = (data.content||[]).map(b=>b.type==='text'?b.text:'').join('');
-
-    // Extract JSON array of URLs
-    const match = text.match(/\[[\s\S]*?\]/);
-    let urls = [];
-    if(match){
-      try{ urls = JSON.parse(match[0]).filter(u=>typeof u==='string'&&u.startsWith('http')); }catch(e){}
+    const encoded = encodeURIComponent(searches[0]);
+    // Use allorigins proxy to fetch DuckDuckGo image results
+    const proxyUrl = `https://api.allorigins.win/get?url=${encodeURIComponent('https://duckduckgo.com/?q='+encoded+'&iax=images&ia=images&format=json')}`;
+    const r = await fetch(proxyUrl, {signal: AbortSignal.timeout(8000)});
+    const d = await r.json();
+    const html = d.contents||'';
+    // Extract vqd token for API call
+    const vqdMatch = html.match(/vqd=([\d-]+)/);
+    if(vqdMatch){
+      const vqd = vqdMatch[1];
+      const imgUrl = `https://duckduckgo.com/i.js?q=${encoded}&vqd=${vqd}&o=json`;
+      const imgProxy = `https://api.allorigins.win/get?url=${encodeURIComponent(imgUrl)}`;
+      const ir = await fetch(imgProxy, {signal: AbortSignal.timeout(8000)});
+      const id = await ir.json();
+      const imgData = JSON.parse(id.contents||'{}');
+      (imgData.results||[]).slice(0,12).forEach(img=>{
+        if(img.image) urls.add(img.image);
+      });
     }
+  } catch(e){ console.log('DDG failed:', e.message); }
 
-    if(!urls.length){
-      // Fallback: extract any image URLs from response
-      const urlMatches = text.matchAll(/https?:\/\/[^\s"'\]]+\.(?:jpg|jpeg|png|webp)/gi);
-      for(const m of urlMatches){ urls.push(m[0]); if(urls.length>=6) break; }
-    }
-
-    if(urls.length){
-      renderSearchResults(urls, query);
-    } else {
-      grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:16px;color:var(--text2);font-size:12px;">لم يتم العثور على صور. جرب اسماً آخر أو ارفع صورة.</div>';
-    }
-  } catch(err){
-    console.error(err);
-    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:16px;color:var(--text2);font-size:12px;">تعذر البحث. ارفع صورة مباشرة.</div>';
+  // Method 3: Try Bing image search via proxy
+  if(urls.size < 4){
+    try{
+      const bingQ = encodeURIComponent(searches[0]);
+      const bingProxy = `https://api.allorigins.win/get?url=${encodeURIComponent('https://www.bing.com/images/search?q='+bingQ+'&form=HDRSC2&first=1')}`;
+      const br = await fetch(bingProxy, {signal: AbortSignal.timeout(8000)});
+      const bd = await br.json();
+      const html = bd.contents||'';
+      const matches = html.matchAll(/"murl":"(https?:\/\/[^"]+\.(?:jpg|jpeg|png|webp))"/gi);
+      for(const m of matches){ urls.add(m[1]); if(urls.size>=12) break; }
+    }catch(e){ console.log('Bing failed:', e.message); }
   }
+
+  const urlArr = [...urls].filter(u=>u&&u.startsWith('http')).slice(0,9);
+
+  if(urlArr.length){
+    renderSearchResults(urlArr, query);
+  } else {
+    grid.innerHTML = `
+      <div style="grid-column:1/-1;text-align:center;padding:16px;">
+        <p style="font-size:12px;color:var(--text2);margin-bottom:10px;">لم يتم العثور على صور تلقائياً</p>
+        <p style="font-size:11px;color:var(--text2);">الرجاء رفع صورة الساعة مباشرة من الأسفل</p>
+      </div>`;
+  }
+}
+
+// Known clean image URLs for popular watch brands
+function getKnownWatchUrls(query){
+  const q = query.toLowerCase();
+  const urls = [];
+  if(q.includes('rolex') && q.includes('submariner')){
+    urls.push(
+      'https://content.rolex.com/dam/new-watches-2024/homepage/watches/submariner/m124060-0001.png',
+      'https://content.rolex.com/dam/new-watches-2024/homepage/watches/submariner/m124060-0001_drp-upright-bba-with-shadow.png',
+    );
+  }
+  if(q.includes('rolex') && (q.includes('datejust')||q.includes('داتجست'))){
+    urls.push('https://content.rolex.com/dam/new-watches-2024/homepage/watches/datejust/m126234-0051.png');
+  }
+  if(q.includes('rolex') && q.includes('daytona')){
+    urls.push('https://content.rolex.com/dam/new-watches-2024/homepage/watches/daytona/m126500ln-0002.png');
+  }
+  if(q.includes('ap') || q.includes('audemars') || q.includes('royal oak')){
+    urls.push(
+      'https://www.audemarspiguet.com/content/dam/ap/com/product-pictures/Royal_Oak/15500ST.OO.1220ST.01/15500ST.OO.1220ST.01-1.png',
+    );
+  }
+  if(q.includes('omega') || q.includes('أوميغا')){
+    urls.push('https://www.omegawatches.com/media/catalog/product/O/2/O22030422001001-b.png');
+  }
+  if(q.includes('patek') || q.includes('باتيك')){
+    urls.push('https://www.patek.com/contents/default/en/5167A-001_BACK.jpg');
+  }
+  return urls;
 }
 
 function renderSearchResults(urls, query){
